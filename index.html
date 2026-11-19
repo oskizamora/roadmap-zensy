@@ -1,0 +1,1205 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Roadmap Zensy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800&display=swap">
+<style>
+/* Roadmap Zensy v2 — Zensy Glass. Tema claro único (decisión 7): el kit no define tokens oscuros.
+   Layout: barra superior fija en vidrio regular; tabla sólida con seis columnas fijas y Gantt con scroll;
+   diálogo de edición en vidrio frosty; generador de diapositiva al pie. */
+:root {
+  color-scheme: light;
+  /* Color · Zensy Glass */
+  --pink-500: #E90062; --pink-press: #D6005A; --pink-600: #C90055; --pink-700: #A30047; --pink-100: #FFE9F1;
+  --lime-500: #AEFB0A; --lime-100: #E9FFB8;
+  --ink: #0E0E10; --muted: #4A4A55; --line: #E6E6EA; --canvas: #FBF7F9; --surface-2: #F6F5F8; --content: #FAFAFA; --white: #FFFFFF;
+  --warn-fg: #92400E; --warn-bg: #FEF3C7; --warn-500: #F59E0B; --error-fg: #B91C1C;
+  --glass: rgba(250, 250, 250, 0.72); --glass-frosty: rgba(250, 250, 250, 0.96);
+  --shadow-glass: 4px 4px 12px rgba(14, 14, 16, 0.05);
+  /* Estados (por defecto; los editores pueden cambiarlos desde la página) */
+  --st-done-fg: #0E0E10; --st-done-bg: #E9FFB8;
+  --st-prog-fg: #A30047; --st-prog-bg: #FFE9F1;
+  --st-qa-fg: #1D4ED8; --st-qa-bg: #DBEAFE;
+  --st-ready-fg: #6D28D9; --st-ready-bg: #EDE9FE;
+  --st-prd-fg: #0F766E; --st-prd-bg: #CCFBF1;
+  --st-disc-fg: #4A4A55; --st-disc-bg: #EEEEF1;
+  /* Tipografía · Urbanist */
+  --font: Urbanist, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Radios concéntricos y espaciado */
+  --r-widget: 28px; --r-inner: 12px; --r-pill: 999px;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s8: 32px; --s10: 40px; --s14: 56px;
+  --qw: 36px; /* ancho de una media quincena en el Gantt */
+}
+* { box-sizing: border-box; }
+html { height: 100%; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font: 400 16px/22px var(--font); -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--canvas); }
+.page { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 var(--s10); }
+h1, h2, h3 { margin: 0; text-wrap: balance; letter-spacing: -0.02em; }
+h1 { font: 800 32px/36px var(--font); letter-spacing: -0.02em; }
+h2 { font: 800 22px/26px var(--font); }
+h3 { font: 700 17px/22px var(--font); letter-spacing: 0; }
+p { margin: 0; }
+a { color: var(--pink-600); }
+button { font: inherit; color: inherit; }
+.note { font: 600 12px/16px var(--font); color: var(--muted); }
+.label { font: 700 14px/18px var(--font); }
+.tnum { font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 2px solid var(--pink-500); outline-offset: 2px; }
+
+/* ---- barra superior (vidrio regular) ---- */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; margin: 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 0 calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  padding: var(--s3) max(16px, env(safe-area-inset-right, 0px)) var(--s3) max(16px, env(safe-area-inset-left, 0px));
+  background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); box-shadow: var(--shadow-glass); }
+.topbar-row { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
+.brand { display: flex; align-items: baseline; gap: var(--s2); margin-right: var(--s2); }
+.brand .z { font: 800 22px/26px var(--font); letter-spacing: -0.02em; color: var(--pink-500); }
+.brand .t { font: 800 22px/26px var(--font); letter-spacing: -0.02em; }
+.tabs { display: flex; gap: var(--s1); flex-wrap: wrap; align-items: center; }
+.tab { border: 1px solid transparent; background: transparent; border-radius: var(--r-pill); padding: 7px 14px; font: 700 14px/18px var(--font); color: var(--muted); cursor: pointer; transition: transform .12s ease, background .12s ease; display: inline-flex; align-items: center; gap: 6px; }
+.tab:hover { background: var(--pink-100); color: var(--pink-700); }
+.tab:active { transform: scale(.97); }
+.tab[aria-selected="true"] { background: var(--ink); color: var(--white); }
+.tab .n { font: 600 12px/16px var(--font); opacity: .8; }
+.spacer { flex: 1; }
+.status-pill { display: inline-flex; align-items: center; gap: 6px; border-radius: var(--r-pill); padding: 5px 10px; font: 600 12px/16px var(--font); color: var(--muted); background: var(--content); border: 1px solid var(--line); }
+.status-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.status-pill[data-state="saving"] .dot { background: var(--warn-500); }
+.status-pill[data-state="saved"] .dot { background: var(--lime-500); border: 1px solid var(--ink); }
+.status-pill[data-state="error"] { color: var(--error-fg); } .status-pill[data-state="error"] .dot { background: var(--error-fg); }
+.ctrl { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: var(--r-pill); border: 1px solid var(--line); background: var(--content); font: 700 13px/18px var(--font); color: var(--ink); cursor: pointer; box-shadow: var(--shadow-glass); transition: transform .12s ease; white-space: nowrap; }
+.ctrl:hover { background: var(--white); } .ctrl:active { transform: scale(.97); }
+.ctrl.primary { background: linear-gradient(135deg, var(--pink-500), var(--pink-press)); color: var(--white); border-color: transparent; }
+.ctrl.tint { background: var(--pink-100); color: var(--pink-700); border-color: transparent; box-shadow: none; }
+.ctrl[disabled] { background: var(--surface-2); color: var(--muted); cursor: not-allowed; box-shadow: none; }
+.ctrl input[type="date"] { border: 0; background: transparent; font: 600 13px/18px var(--font); color: var(--ink); width: 128px; }
+.ctrl.icon { width: 36px; padding: 0; justify-content: center; }
+.scenario-banner { margin-top: var(--s3); display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; padding: 8px 14px; border-radius: var(--r-inner); background: var(--pink-100); color: var(--pink-700); font: 600 13px/18px var(--font); }
+.scenario-banner.warn { background: var(--warn-bg); color: var(--warn-fg); }
+
+/* ---- cabecera de pestaña ---- */
+.tabhead { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--s3) var(--s6); margin: var(--s6) 0 var(--s3); }
+.tabhead .meta { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s4); font: 600 12px/16px var(--font); color: var(--muted); }
+.tabhead .meta b { color: var(--ink); font-weight: 700; }
+.chip-warn { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: var(--r-pill); background: var(--warn-bg); color: var(--warn-fg); font: 700 12px/16px var(--font); }
+.toolbar { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; margin-bottom: var(--s3); }
+.search { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border-radius: var(--r-pill); border: 1px solid var(--line); background: var(--content); min-width: 0; }
+.search input { border: 0; background: transparent; font: 400 14px/18px var(--font); color: var(--ink); width: 200px; max-width: 50vw; outline: none; }
+.search input::placeholder { color: var(--muted); }
+
+/* ---- tabla ---- */
+.tablewrap { position: relative; overflow-x: auto; overflow-y: visible; border: 1px solid var(--line); border-radius: var(--r-widget); background: var(--content); }
+table.rm { border-collapse: separate; border-spacing: 0; width: max-content; min-width: 100%; font: 400 13px/18px var(--font); }
+table.rm th, table.rm td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; text-align: left; background: var(--content); }
+table.rm thead th { font: 700 12px/16px var(--font); color: var(--muted); letter-spacing: .02em; text-transform: uppercase; background: var(--surface-2); position: sticky; top: 0; z-index: 3; }
+table.rm thead tr.halves th { text-transform: none; letter-spacing: 0; font-weight: 600; }
+table.rm thead th.gh { text-align: center; border-left: 1px solid var(--line); text-transform: none; letter-spacing: 0; white-space: nowrap; font-size: 11.5px; padding: 6px 4px; }
+.ctrl.icon svg { width: 18px; height: 18px; }
+table.rm thead th.gq { text-align: center; padding: 4px 0; min-width: var(--qw); width: var(--qw); border-left: 1px dashed var(--line); font-size: 11px; }
+table.rm thead th.gq.first { border-left: 1px solid var(--line); }
+table.rm thead th.gq.today { color: var(--pink-700); background: var(--pink-100); }
+table.rm thead th.gq.scen { color: var(--pink-700); }
+table.rm tbody tr:hover td { background: var(--white); }
+table.rm td.fix, table.rm th.fix { position: sticky; z-index: 2; }
+table.rm thead th.fix { z-index: 4; }
+table.rm td.fix.last, table.rm th.fix.last { box-shadow: 1px 0 0 var(--line); }
+.c-name { left: 0; min-width: 250px; max-width: 250px; width: 250px; }
+.c-area { left: 250px; min-width: 112px; width: 112px; }
+.c-status { left: 362px; min-width: 150px; width: 150px; }
+.c-golive { left: 512px; min-width: 164px; width: 164px; }
+.c-start { left: 676px; min-width: 100px; width: 100px; }
+.c-prod { left: 776px; min-width: 112px; width: 112px; }
+table.rm td.c-name { font: 600 14px/18px var(--font); }
+.name-cell { display: flex; align-items: flex-start; gap: 8px; min-width: 0; }
+.name-cell .nm { min-width: 0; overflow-wrap: anywhere; }
+.name-cell .sub { display: block; font: 600 11px/14px var(--font); color: var(--muted); margin-top: 2px; }
+.marks { display: inline-flex; gap: 4px; align-items: center; flex-shrink: 0; padding-top: 3px; }
+.mark { width: 10px; height: 10px; display: inline-block; border-radius: 50%; border: 1.5px solid var(--muted); }
+.mark.hollow { background: transparent; }
+.mark.filled { background: var(--ink); border-color: var(--ink); }
+.mark.square { border-radius: 2px; background: var(--pink-100); border-color: var(--pink-700); }
+.mark.warn { width: 0; height: 0; border: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 11px solid var(--warn-500); border-radius: 0; }
+.mark.changed { border-radius: 2px; background: var(--warn-bg); border-color: var(--warn-fg); }
+.badge { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: var(--r-pill); font: 700 12.5px/16px var(--font); white-space: nowrap; }
+.badge.raw { background: var(--surface-2); color: var(--muted); border: 1px dashed var(--warn-500); }
+.badge.none { background: transparent; color: var(--muted); border: 1px dashed var(--line); font-weight: 600; }
+select.badge-select { appearance: none; -webkit-appearance: none; border: 1px solid transparent; cursor: pointer; padding-right: 22px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%234A4A55' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; }
+select.badge-select:hover { border-color: var(--line); }
+.golive { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.sem { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: var(--line); }
+.sem.ok { background: var(--lime-500); border: 1.5px solid var(--ink); }
+.sem.obs { background: var(--warn-500); }
+.golive .txt { font: 600 13px/16px var(--font); }
+.golive .conf { font: 600 11px/14px var(--font); color: var(--muted); }
+.golive .conf.obs { color: var(--warn-fg); }
+.inline-input { border: 1px solid transparent; border-radius: 8px; padding: 2px 6px; font: 600 13px/16px var(--font); background: transparent; color: var(--ink); width: 100%; min-width: 60px; }
+.inline-input:hover { border-color: var(--line); background: var(--white); }
+.inline-input:focus { border-color: var(--pink-500); background: var(--white); outline: none; }
+select.inline-input { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 18px; width: auto;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%234A4A55' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 4px center; }
+.muted { color: var(--muted); }
+.sindato { color: var(--muted); font: 600 12px/16px var(--font); }
+td.gantt { padding: 6px 0; border-left: 1px solid var(--line); }
+.gwrap { position: relative; height: 30px; min-width: 100%; background-image: repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px var(--qw)); background-size: calc(var(--qw) * 2) 100%; }
+.gwrap .bar { position: absolute; top: 4px; height: 22px; border-radius: var(--r-pill); display: flex; align-items: center; padding: 0 8px; font: 700 11px/14px var(--font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 1px solid; }
+.gwrap .bar.nolabel { padding: 0; }
+.gwrap .today, .gwrap .scen { position: absolute; top: -6px; bottom: -6px; width: 2px; margin-left: -1px; background: var(--pink-500); z-index: 1; pointer-events: none; }
+.gwrap .scen { background: none; border-left: 2px dashed var(--pink-700); width: 0; }
+.gwrap .empty { position: absolute; left: 10px; top: 7px; font: 600 12px/16px var(--font); color: var(--muted); }
+td.acts { white-space: nowrap; text-align: right; }
+.iconbtn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--content); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted); margin-left: 4px; transition: transform .12s ease; }
+.iconbtn:hover { background: var(--white); color: var(--ink); } .iconbtn:active { transform: scale(.97); }
+.iconbtn svg { width: 16px; height: 16px; }
+tr.hidden-row td { opacity: .45; }
+tr.hidden-row td.c-name .nm { text-decoration: line-through; }
+
+/* ---- leyenda / vacíos ---- */
+.legend { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4); margin: var(--s3) 0 0; font: 600 12px/16px var(--font); color: var(--muted); align-items: center; }
+.legend .it { display: inline-flex; align-items: center; gap: 6px; }
+.legend .swatch { width: 16px; height: 2px; background: var(--pink-500); display: inline-block; }
+.legend .swatch.dash { border-top: 2px dashed var(--pink-700); background: none; height: 0; }
+.empty-state { padding: var(--s8) var(--s5); text-align: center; color: var(--muted); display: grid; gap: var(--s2); justify-items: center; }
+.empty-state h3 { color: var(--ink); }
+.skeleton { display: grid; gap: 10px; padding: var(--s5); }
+.skeleton .sk { height: 18px; border-radius: 8px; background: linear-gradient(90deg, var(--surface-2), var(--line), var(--surface-2)); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.alert { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: var(--r-inner); background: var(--warn-bg); color: var(--warn-fg); font: 600 13px/18px var(--font); margin: var(--s3) 0; }
+.alert.error { background: #FEE2E2; color: var(--error-fg); }
+.alert.info { background: var(--pink-100); color: var(--pink-700); }
+
+/* ---- secciones ---- */
+.section { margin-top: var(--s8); padding: var(--s5); background: var(--content); border: 1px solid var(--line); border-radius: var(--r-widget); }
+.section > header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s2) var(--s4); margin-bottom: var(--s3); }
+.section > header p { color: var(--muted); font: 400 14px/20px var(--font); max-width: 65ch; }
+details.section > summary { cursor: pointer; list-style: none; display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); flex-wrap: wrap; }
+details.section > summary::-webkit-details-marker { display: none; }
+details.section > summary::after { content: "Mostrar"; font: 700 13px/18px var(--font); color: var(--pink-700); }
+details.section[open] > summary::after { content: "Ocultar"; }
+.changes { display: grid; gap: 6px; margin-top: var(--s3); }
+.chg { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--r-inner); background: var(--white); font: 400 13px/18px var(--font); }
+.chg .who { font: 600 12px/16px var(--font); color: var(--muted); }
+.chg .what b { font-weight: 700; }
+.chg .val { color: var(--muted); } .chg .val b { color: var(--ink); font-weight: 600; }
+
+/* ---- generador ---- */
+.gen-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--s5); align-items: start; }
+.gen-grid canvas { width: 100%; height: auto; display: block; border-radius: var(--r-inner); border: 1px solid var(--line); background: var(--white); }
+.field { display: flex; flex-direction: column; gap: 2px; padding: 8px 14px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-inner); min-height: 54px; }
+.field:focus-within { border: 1.5px solid var(--pink-500); box-shadow: var(--shadow-glass); }
+.field .l { font: 600 12px/16px var(--font); color: var(--muted); }
+.field input, .field select, .field textarea { border: 0; background: transparent; font: 400 15px/20px var(--font); color: var(--ink); outline: none; padding: 0; width: 100%; resize: vertical; }
+.field.err { border-color: var(--error-fg); }
+.help { margin: 4px 0 0 8px; font: 600 12px/16px var(--font); color: var(--error-fg); }
+.fields { display: grid; gap: var(--s2); }
+.gen-side { display: grid; gap: var(--s2); }
+.gen-actions { display: flex; gap: var(--s2); flex-wrap: wrap; margin-top: var(--s2); }
+
+/* ---- diálogo (vidrio frosty) ---- */
+dialog.sheet { border: 1px solid var(--line); border-radius: var(--r-widget); padding: 0; width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 48px); background: var(--glass-frosty); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); box-shadow: 0 24px 60px rgba(14, 14, 16, .18); color: var(--ink); }
+dialog.sheet::backdrop { background: rgba(14, 14, 16, .28); }
+dialog.sheet .dlg-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); padding: var(--s5) var(--s5) var(--s3); position: sticky; top: 0; background: var(--glass-frosty); border-bottom: 1px solid var(--line); z-index: 1; }
+dialog.sheet .dlg-head .handle { position: absolute; left: 50%; top: 8px; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: var(--line); }
+dialog.sheet .dlg-body { padding: var(--s4) var(--s5); display: grid; gap: var(--s3); }
+dialog.sheet .dlg-foot { display: flex; gap: var(--s2); flex-wrap: wrap; justify-content: space-between; padding: var(--s3) var(--s5) var(--s5); border-top: 1px solid var(--line); position: sticky; bottom: 0; background: var(--glass-frosty); }
+.frow { display: grid; grid-template-columns: 1fr auto; gap: var(--s2); align-items: center; }
+.frow .revert { font: 700 12px/16px var(--font); color: var(--pink-700); background: var(--pink-100); border: 0; border-radius: var(--r-pill); padding: 6px 10px; cursor: pointer; white-space: nowrap; }
+.frow .revert[disabled] { visibility: hidden; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--s2); }
+.phases { display: grid; gap: var(--s2); }
+.phase { display: grid; grid-template-columns: 1.2fr 1fr 1fr auto; gap: var(--s2); align-items: end; }
+.phase .del { height: 36px; width: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--white); cursor: pointer; color: var(--muted); }
+.srcnote { font: 600 12px/16px var(--font); color: var(--muted); }
+.flags { display: grid; gap: 4px; }
+.flag { display: flex; gap: 8px; align-items: flex-start; font: 600 12px/16px var(--font); color: var(--warn-fg); background: var(--warn-bg); border-radius: 8px; padding: 6px 10px; }
+
+/* ---- ajustes de color ---- */
+.colors { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--s2); }
+.colorrow { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--r-inner); background: var(--white); }
+.colorrow input[type="color"] { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 8px; padding: 0; background: none; cursor: pointer; }
+.colorrow .ratio { font: 700 12px/16px var(--font); color: var(--muted); min-width: 56px; text-align: right; }
+.colorrow .ratio.bad { color: var(--error-fg); }
+
+/* ---- responsive ---- */
+@media (max-width: 1100px) {
+  .c-area, .c-status, .c-golive, .c-start, .c-prod { position: static !important; }
+  table.rm td.fix.last, table.rm th.fix.last { box-shadow: none; }
+  table.rm td.c-name.fix, table.rm th.c-name.fix { box-shadow: 1px 0 0 var(--line); }
+}
+@media (max-width: 900px) { .gen-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  h1 { font-size: 26px; line-height: 30px; }
+  .c-name { min-width: 170px; max-width: 170px; width: 170px; }
+  .c-status { min-width: 118px; width: 118px; }
+  .c-golive { min-width: 130px; width: 130px; }
+  .c-area, .c-start, .c-prod { display: none; }
+  body:not(.show-gantt) td.gantt, body:not(.show-gantt) th.gh, body:not(.show-gantt) th.gq { display: none; }
+  table.rm { min-width: 100%; }
+  .tabs { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; }
+  .search input { width: 140px; }
+  .phase { grid-template-columns: 1fr 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .skeleton .sk { animation: none; } .ctrl, .tab, .iconbtn { transition: none; } }
+
+</style>
+<div class="page" id="app">
+  <noscript><p class="alert">Esta página necesita JavaScript para mostrar el roadmap.</p></noscript>
+</div>
+<script>
+/* Roadmap Zensy v2 — lógica pura compartida por la página y por la ingesta.
+   Sin DOM, sin red. Se incluye en línea en el HTML y se importa desde Node en las pruebas. */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.RoadmapCore = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  const ESTADOS = ['Done', 'En progreso', 'QA', 'Ready for dev', 'PRD', 'Discovery'];
+  const CONFIANZAS = ['Confirmada', 'En observación', 'Sin confirmar'];
+  const AREAS_FIJAS = ['Producto', 'Operaciones', 'Finanzas', 'Growth', 'People'];
+  const CABECERAS = ['Iniciativa', 'Fase', 'Inicio', 'Fin', 'Estado', 'Área/Equipo', 'Responsable',
+    'Go live (mes)', 'Salida a producción', 'Confianza en la fecha', 'Objetivo', 'Dependencias', 'Link/Épica'];
+  const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  const MESES_ABR = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+  // Mapeo acordado el 2026-11-08: estados de Jira (PP) a los seis del roadmap.
+  // To Do no pisa el estado del Sheet; Rejected oculta la fila con marca.
+  const JIRA_ESTADOS = {
+    'Done': 'Done',
+    'In Progress': 'En progreso',
+    'Ready for QA': 'QA',
+    'QA': 'QA',
+    'Ready for deployment': 'QA',
+    'To Do': null,
+    'Rejected': 'REJECTED',
+  };
+
+  const COLORES_ESTADO = {
+    'Done': { fg: '#0E0E10', bg: '#E9FFB8' },
+    'En progreso': { fg: '#A30047', bg: '#FFE9F1' },
+    'QA': { fg: '#1D4ED8', bg: '#DBEAFE' },
+    'Ready for dev': { fg: '#6D28D9', bg: '#EDE9FE' },
+    'PRD': { fg: '#0F766E', bg: '#CCFBF1' },
+    'Discovery': { fg: '#4A4A55', bg: '#EEEEF1' },
+  };
+
+  // ---------- fechas y quincenas ----------
+  const ISO = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+  function parseISO(s) {
+    if (typeof s !== 'string') return null;
+    const m = ISO.exec(s.trim());
+    if (!m) return null;
+    const y = +m[1], mo = +m[2], d = +m[3];
+    if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+    const dt = new Date(Date.UTC(y, mo - 1, d));
+    if (dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) return null;
+    return { y, m: mo, d };
+  }
+
+  // Índice de media quincena: S-1 = días 1 a 15, S-2 = 16 en adelante.
+  function quincena(y, m, d) { return (y * 12 + m) * 2 + (d <= 15 ? 0 : 1); }
+  function quincenaDeISO(s) { const p = parseISO(s); return p ? quincena(p.y, p.m, p.d) : null; }
+  function quincenaDeFecha(date) { return quincena(date.getFullYear(), date.getMonth() + 1, date.getDate()); }
+  // Descompone un índice en {y, m, half} (half 0 = S-1, 1 = S-2).
+  function deQuincena(q) {
+    const half = q % 2; const ym = (q - half) / 2;
+    const m = ((ym - 1) % 12) + 1; const y = (ym - m) / 12;
+    return { y, m, half };
+  }
+  function mesIndice(y, m) { return y * 12 + m; }
+  function etiquetaMes(y, m, corto) { return (corto ? MESES_ABR : MESES)[m - 1] + ' ' + y; }
+
+  // "julio 2026", "nov 2026", "enero 2026" -> {y, m} o null
+  function parseGoLiveMes(s) {
+    if (typeof s !== 'string') return null;
+    const t = s.trim().toLowerCase().replace(/\s+/g, ' ');
+    const m = /^([a-záéíóú]+)\.?\s+(\d{4})$/.exec(t);
+    if (!m) return null;
+    let idx = MESES.indexOf(m[1]);
+    if (idx < 0) idx = MESES_ABR.indexOf(m[1].slice(0, 3));
+    if (idx < 0) { const alt = { setiembre: 8 }; idx = alt[m[1]] ?? -1; }
+    if (idx < 0) return null;
+    return { y: +m[2], m: idx + 1 };
+  }
+
+  // Meses declarados en Configuración: "2026-07 a 2027-01". Cualquier otra forma -> null (se ignora y se avisa).
+  function parseRangoMeses(s) {
+    if (typeof s !== 'string') return null;
+    const m = /^(\d{4})-(\d{2})\s*(?:a|-|–|hasta)\s*(\d{4})-(\d{2})$/i.exec(s.trim());
+    if (!m) return null;
+    const a = mesIndice(+m[1], +m[2]), b = mesIndice(+m[3], +m[4]);
+    if (+m[2] < 1 || +m[2] > 12 || +m[4] < 1 || +m[4] > 12 || b < a) return null;
+    return { from: a, to: b };
+  }
+
+  // ---------- claves ----------
+  function slug(s) {
+    return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'sin-nombre';
+  }
+  function tabId(nombre) { return slug(nombre); }
+  function rowKey(nombreIniciativa) { return slug(nombreIniciativa); }
+
+  // ---------- validación e ingesta ----------
+  // filas: array de arrays (la fila 0 son las cabeceras), tal como las devuelve el Sheet.
+  function validarCabeceras(cabeceras) {
+    const errores = [];
+    CABECERAS.forEach((c, i) => {
+      const v = (cabeceras[i] || '').toString().trim();
+      if (v !== c) errores.push(`Columna ${i + 1}: se esperaba "${c}" y hay "${v || 'vacío'}"`);
+    });
+    return errores;
+  }
+
+  function esEjemplo(fila) { return /^\s*EJEMPLO\b/i.test(String(fila[0] || '')); }
+  function vacia(fila) { return !fila || fila.every(c => String(c ?? '').trim() === ''); }
+
+  /**
+   * Convierte las filas de una pestaña del Sheet en documentos de `source`.
+   * Devuelve { ok, errores (estructurales, detienen), tab, rows: [...], inconsistencias: [...], avisos: [...] }.
+   * Nada se corrige: cada inconsistencia se marca en la fila (flags) y se lista.
+   */
+  function ingestar(nombreTab, filas, opciones) {
+    const op = Object.assign({ fuente: '', responsable: '', fechaCorte: '', mesesDeclarados: '', orden: 100 }, opciones || {});
+    const errores = [];
+    if (!filas || !filas.length) return { ok: false, errores: ['La pestaña no tiene cabeceras'], rows: [], inconsistencias: [], avisos: [] };
+    const errCab = validarCabeceras(filas[0]);
+    if (errCab.length) return { ok: false, errores: errCab, rows: [], inconsistencias: [], avisos: [] };
+
+    const porIniciativa = new Map(); // nombre -> doc
+    const inconsistencias = []; const avisos = [];
+    let ordenFila = 0; let filasLeidas = 0;
+
+    for (let i = 1; i < filas.length; i++) {
+      const f = filas[i]; if (vacia(f) || esEjemplo(f)) continue;
+      filasLeidas++;
+      const get = k => String(f[CABECERAS.indexOf(k)] ?? '').trim();
+      const nombre = get('Iniciativa');
+      if (!nombre) { inconsistencias.push({ fila: i + 1, iniciativa: '(sin nombre)', codigo: 'sin-nombre', detalle: 'La fila no tiene Iniciativa' }); continue; }
+      const key = rowKey(nombre);
+      let doc = porIniciativa.get(key);
+      if (!doc) {
+        ordenFila++;
+        doc = {
+          tab: tabId(nombreTab), rowKey: key, name: nombre, orden: ordenFila,
+          area: '', status: '', statusRaw: '', responsable: '', goLiveMes: '', salidaProd: '', salidaProdRaw: '',
+          confianza: '', objetivo: '', dependencias: '', link: '', phases: [], flags: [],
+        };
+        porIniciativa.set(key, doc);
+      }
+      // Los datos de la iniciativa completa pueden venir solo en la primera fila; se toma el primer valor no vacío.
+      const primero = (campo, v) => { if (v && !doc[campo]) doc[campo] = v; };
+      primero('area', get('Área/Equipo'));
+      primero('responsable', get('Responsable'));
+      primero('goLiveMes', get('Go live (mes)'));
+      primero('objetivo', get('Objetivo'));
+      primero('dependencias', get('Dependencias'));
+      primero('link', get('Link/Épica'));
+      primero('confianza', get('Confianza en la fecha'));
+      const estado = get('Estado');
+      if (estado && !doc.statusRaw) {
+        doc.statusRaw = estado;
+        if (ESTADOS.includes(estado)) doc.status = estado;
+        else { doc.status = ''; flag(doc, inconsistencias, i + 1, 'estado-fuera-de-lista', `Estado "${estado}" no está en la lista de seis`); }
+      }
+      const salida = get('Salida a producción');
+      if (salida && !doc.salidaProdRaw) {
+        doc.salidaProdRaw = salida;
+        if (parseISO(salida)) doc.salidaProd = salida;
+        else flag(doc, inconsistencias, i + 1, 'fecha-no-parseable', `Salida a producción "${salida}" no es una fecha AAAA-MM-DD`);
+      }
+      if (doc.confianza && !CONFIANZAS.includes(doc.confianza)) {
+        flag(doc, inconsistencias, i + 1, 'confianza-fuera-de-lista', `Confianza "${doc.confianza}" no está en la lista`);
+      }
+      // Fase
+      const faseLabel = get('Fase'); const ini = get('Inicio'); const fin = get('Fin');
+      if (ini || fin || faseLabel) {
+        const ph = { label: faseLabel, start: '', end: '', startRaw: ini, endRaw: fin, qStart: null, qEnd: null };
+        const pIni = parseISO(ini), pFin = parseISO(fin);
+        if (ini && !pIni) flag(doc, inconsistencias, i + 1, 'fecha-no-parseable', `Inicio "${ini}" no es una fecha AAAA-MM-DD`);
+        if (fin && !pFin) flag(doc, inconsistencias, i + 1, 'fecha-no-parseable', `Fin "${fin}" no es una fecha AAAA-MM-DD`);
+        if (pIni) { ph.start = ini; ph.qStart = quincena(pIni.y, pIni.m, pIni.d); }
+        if (pFin) { ph.end = fin; ph.qEnd = quincena(pFin.y, pFin.m, pFin.d); }
+        if (pIni && pFin && fin < ini) flag(doc, inconsistencias, i + 1, 'fin-antes-de-inicio', `Fin ${fin} es anterior a Inicio ${ini}`);
+        // Con un solo extremo válido, la barra ocupa esa quincena; el extremo inválido ya quedó marcado.
+        if (pIni && !pFin) { ph.qEnd = ph.qStart; }
+        if (pFin && !pIni) { ph.qStart = ph.qEnd; }
+        if (ph.qStart !== null || ph.label) doc.phases.push(ph);
+      }
+    }
+
+    // Marcas a nivel de iniciativa (una vez reunidas sus fases)
+    const docs = Array.from(porIniciativa.values());
+    for (const doc of docs) {
+      const barras = doc.phases.filter(p => p.qStart !== null && p.qEnd !== null);
+      doc.qStart = barras.length ? Math.min(...barras.map(p => p.qStart)) : null;
+      doc.qEnd = barras.length ? Math.max(...barras.map(p => p.qEnd)) : null;
+      doc.inicio = barras.length ? barras.map(p => p.start).filter(Boolean).sort()[0] || '' : '';
+      // salida igual al inicio
+      if (doc.salidaProd && doc.inicio && doc.salidaProd === doc.inicio) flag(doc, inconsistencias, null, 'salida-igual-inicio', `Salida a producción ${doc.salidaProd} es igual a la fecha de inicio`);
+      // salida antes del inicio
+      if (doc.salidaProd && doc.inicio && doc.salidaProd < doc.inicio) flag(doc, inconsistencias, null, 'salida-antes-de-inicio', `Salida a producción ${doc.salidaProd} es anterior al inicio ${doc.inicio}`);
+      // go live en un mes/año que no coincide con la barra
+      const gl = parseGoLiveMes(doc.goLiveMes);
+      if (doc.goLiveMes && !gl) flag(doc, inconsistencias, null, 'go-live-no-parseable', `Go live "${doc.goLiveMes}" no se entiende como mes y año`);
+      if (gl && doc.qStart !== null) {
+        const mGl = mesIndice(gl.y, gl.m); const a = deQuincena(doc.qStart), b = deQuincena(doc.qEnd);
+        const mA = mesIndice(a.y, a.m), mB = mesIndice(b.y, b.m);
+        if (mGl < mA || mGl > mB) {
+          const dif = Math.abs(gl.y - b.y) >= 1 && gl.m === b.m ? 'go-live-ano-distinto' : 'go-live-fuera-de-barra';
+          flag(doc, inconsistencias, null, dif, `Go live "${doc.goLiveMes}" no coincide con las fases (${etiquetaMes(a.y, a.m, true)} a ${etiquetaMes(b.y, b.m, true)})`);
+        }
+      }
+      // estado activo sin fases planificadas
+      if (['En progreso', 'QA', 'Ready for dev'].includes(doc.status) && doc.qStart === null) flag(doc, inconsistencias, null, 'sin-fases', `Está en "${doc.status}" y no tiene ninguna fase con fechas`);
+      // sin detalle en la fuente
+      doc.sinDetalle = !doc.objetivo && !doc.responsable && !doc.link;
+    }
+
+    // Rango de meses
+    const qs = docs.filter(d => d.qStart !== null);
+    let rango = null;
+    if (qs.length) {
+      const qmin = Math.min(...qs.map(d => d.qStart)), qmax = Math.max(...qs.map(d => d.qEnd));
+      const a = deQuincena(qmin), b = deQuincena(qmax);
+      rango = { from: mesIndice(a.y, a.m), to: mesIndice(b.y, b.m) };
+    }
+    const declarado = parseRangoMeses(op.mesesDeclarados);
+    if (op.mesesDeclarados && !declarado) avisos.push(`Meses del Gantt "${op.mesesDeclarados}" no se pudieron leer; el rango se calcula desde las fechas reales`);
+    if (declarado && rango && (declarado.from > rango.from || declarado.to < rango.to)) avisos.push(`Meses declarados no cubren todas las filas; se usa el rango real`);
+    else if (declarado && rango) rango = declarado;
+
+    const tab = {
+      id: tabId(nombreTab), name: nombreTab, orden: op.orden, responsable: op.responsable, fechaCorte: op.fechaCorte,
+      fuente: op.fuente, monthFrom: rango ? rango.from : null, monthTo: rango ? rango.to : null,
+      rowCount: docs.length, filasLeidas, inconsistencias: inconsistencias.length, ingestedAt: op.ingestedAt || new Date().toISOString(),
+      mesesDeclarados: op.mesesDeclarados || '',
+    };
+    if (op.fechaCorte && !parseISO(op.fechaCorte)) avisos.push(`Fecha de corte "${op.fechaCorte}" no es AAAA-MM-DD`);
+    if (!op.fechaCorte) avisos.push('La pestaña no tiene fecha de corte en Configuración');
+    return { ok: true, errores, tab, rows: docs, inconsistencias, avisos };
+  }
+
+  function flag(doc, lista, fila, codigo, detalle) {
+    doc.flags.push({ code: codigo, msg: detalle });
+    lista.push({ fila, iniciativa: doc.name, codigo, detalle });
+  }
+
+  // Enriquecimiento desde Jira: aplica el mapeo acordado. `epica` = {key, status, assignee, url}
+  function aplicarJira(doc, epica) {
+    if (!epica) return doc;
+    const mapped = JIRA_ESTADOS[epica.status];
+    doc.jira = { key: epica.key, status: epica.status, assignee: epica.assignee || '', url: epica.url || '', mapped: mapped === undefined ? null : mapped };
+    if (mapped === 'REJECTED') { doc.flags.push({ code: 'jira-rejected', msg: `La épica ${epica.key} está Rejected en Jira; la fila se oculta` }); doc.hiddenBySource = true; }
+    else if (mapped) { if (doc.status !== mapped) doc.jira.overrides = { from: doc.status, to: mapped }; doc.status = mapped; }
+    if (epica.assignee && !doc.responsable) doc.responsable = epica.assignee;
+    if (epica.url && !doc.link) doc.link = epica.url;
+    return doc;
+  }
+
+  // Estado efectivo de una fila: fuente + overlay (campo a campo)
+  function efectiva(source, overlay) {
+    const base = source ? JSON.parse(JSON.stringify(source)) : { phases: [], flags: [], added: true };
+    const out = Object.assign({}, base);
+    out.hidden = false; out.modified = false; out.added = !source;
+    out.changes = {};
+    if (overlay) {
+      if (overlay.hidden && overlay.hidden.value) out.hidden = true;
+      if (overlay.added) out.added = true;
+      const campos = overlay.fields || {};
+      for (const k of Object.keys(campos)) {
+        const c = campos[k]; if (!c) continue;
+        out[k] = c.value; out.changes[k] = c; out.modified = true;
+      }
+      if (overlay.sourceChanged) out.sourceChanged = overlay.sourceChanged;
+    }
+    if (out.phases && out.phases.length) {
+      const barras = out.phases.filter(p => p.qStart !== null && p.qStart !== undefined && p.qEnd !== null && p.qEnd !== undefined);
+      out.qStart = barras.length ? Math.min(...barras.map(p => p.qStart)) : null;
+      out.qEnd = barras.length ? Math.max(...barras.map(p => p.qEnd)) : null;
+    }
+    return out;
+  }
+
+  // Conserva el overlay solo si la fila sigue existiendo; marca "fuente cambió" si un campo editado cambió en la fuente.
+  function reconciliarOverlay(overlayDoc, sourceAntes, sourceDespues) {
+    if (!sourceDespues) return { keep: !!(overlayDoc && overlayDoc.added), overlay: overlayDoc };
+    if (!overlayDoc) return { keep: false, overlay: null };
+    const out = JSON.parse(JSON.stringify(overlayDoc));
+    const cambios = [];
+    for (const k of Object.keys(out.fields || {})) {
+      const antes = sourceAntes ? sourceAntes[k] : undefined; const despues = sourceDespues[k];
+      if (JSON.stringify(antes) !== JSON.stringify(despues)) cambios.push({ field: k, from: antes ?? null, to: despues ?? null });
+    }
+    if (cambios.length) out.sourceChanged = { at: new Date().toISOString(), changes: cambios };
+    return { keep: true, overlay: out };
+  }
+
+  // ---------- contraste WCAG ----------
+  function luminancia(hex) {
+    const h = hex.replace('#', ''); const n = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+    const [r, g, b] = [0, 2, 4].map(i => parseInt(n.slice(i, i + 2), 16) / 255).map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+  function contraste(fg, bg) {
+    const a = luminancia(fg), b = luminancia(bg); const hi = Math.max(a, b), lo = Math.min(a, b);
+    return Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100;
+  }
+  function esHex(s) { return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(s || '')); }
+
+  return {
+    ESTADOS, CONFIANZAS, AREAS_FIJAS, CABECERAS, MESES, MESES_ABR, JIRA_ESTADOS, COLORES_ESTADO,
+    parseISO, quincena, quincenaDeISO, quincenaDeFecha, deQuincena, mesIndice, etiquetaMes, parseGoLiveMes, parseRangoMeses,
+    slug, tabId, rowKey, validarCabeceras, ingestar, aplicarJira, efectiva, reconciliarOverlay, contraste, esHex,
+  };
+});
+
+</script>
+<script>
+/* Roadmap Zensy v2 — lógica de la página. Depende de RoadmapCore (core.js) y del runtime de artefactos (claude.use). */
+(function () {
+  'use strict';
+  const C = window.RoadmapCore;
+  const QW = 36; // px por media quincena (igual a --qw)
+  const FIXED_TABS = C.AREAS_FIJAS.map(n => ({ id: C.tabId(n), name: n }));
+  const STATUS_VARS = { 'Done': 'done', 'En progreso': 'prog', 'QA': 'qa', 'Ready for dev': 'ready', 'PRD': 'prd', 'Discovery': 'disc' };
+  const DEFAULT_SETTINGS = { v: 1, statusColors: JSON.parse(JSON.stringify(C.COLORES_ESTADO)) };
+
+  const state = {
+    db: null, user: null, downloads: null, comments: null,
+    me: { id: null, canEdit: false, canWrite: null, name: '' },
+    tabs: {},            // id -> tab doc
+    source: {},          // id -> Map(rowKey -> doc)
+    overlay: {},         // id -> Map(rowKey -> doc)
+    settings: JSON.parse(JSON.stringify(DEFAULT_SETTINGS)),
+    subs: {}, loaded: { tabs: false, settings: false },
+    activeTab: 'consolidada', query: '', scenario: null, dbMissing: false, loadTimer: null, stale: false,
+    saving: 0, saveState: 'idle', saveError: '', writeQueues: {}, debounces: {},
+    commentsOff: false,
+  };
+
+  // ---------- utilidades ----------
+  const $ = (sel, root) => (root || document).querySelector(sel);
+  function h(tag, attrs, ...children) {
+    const el = document.createElement(tag);
+    if (attrs) for (const [k, v] of Object.entries(attrs)) {
+      if (v === null || v === undefined || v === false) continue;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k === 'html') el.innerHTML = v; // solo para SVG estático propio
+      else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
+      else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+      else el.setAttribute(k, v === true ? '' : v);
+    }
+    for (const c of children.flat()) { if (c === null || c === undefined || c === false) continue; el.append(c.nodeType ? c : document.createTextNode(String(c))); }
+    return el;
+  }
+  const ICON = {
+    pencil: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    comment: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8Z"/></svg>',
+    gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>',
+    close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  };
+  const fmtFecha = iso => { const p = C.parseISO(iso); return p ? `${String(p.d).padStart(2, '0')} ${C.MESES_ABR[p.m - 1]} ${p.y}` : ''; };
+  const fmtFechaHora = iso => { try { const d = new Date(iso); return d.toLocaleString('es-BO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return iso; } };
+  const hoyISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const lsSet = (k, v) => { try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) { /* sin almacenamiento */ } };
+  function statusVar(st) { return STATUS_VARS[st] || null; }
+  function statusColor(st) { const c = state.settings.statusColors && state.settings.statusColors[st]; return c || C.COLORES_ESTADO[st] || null; }
+
+  // ---------- arranque ----------
+  function boot() {
+    const hash = (location.hash || '').replace('#', '');
+    if (hash) state.activeTab = hash;
+    const sc = lsGet('rz-escenario'); if (sc && C.parseISO(sc)) state.scenario = sc;
+    renderShell();
+    renderAll();
+    applyStatusVars();
+    window.addEventListener('hashchange', () => { const id = (location.hash || '').replace('#', '') || 'consolidada'; if (id !== state.activeTab) { state.activeTab = id; renderAll(); } });
+    connect();
+  }
+
+  async function connect() {
+    if (!window.claude || typeof window.claude.use !== 'function') { state.dbMissing = true; renderAll(); return; }
+    const [user, db, downloads, comments] = await Promise.all([claude.use('user'), claude.use('db'), claude.use('downloads'), claude.use('comments')]);
+    state.user = user; state.db = db; state.downloads = downloads; state.comments = comments;
+    if (user) {
+      try { const me = await user.me(); state.me.id = me.id; state.me.name = me.name || ''; state.me.canEdit = !!me.canEdit; } catch (e) { /* nunca rechaza */ }
+      try { state.me.canWrite = await user.can('data.write'); } catch (e) { state.me.canWrite = null; }
+    }
+    // Los editores (admin) son los únicos que escriben según las reglas; sin dato, se deja decidir a la primera escritura.
+    if (!db) { state.dbMissing = true; renderAll(); return; }
+    state.loadTimer = setTimeout(() => { if (!state.loaded.tabs) { state.stale = true; renderAll(); } }, 10000);
+    subscribe('tabs', db.collection('tabs'), snap => {
+      state.tabs = {}; snap.docs.forEach(d => { state.tabs[d.id] = d.data(); });
+      state.loaded.tabs = true; if (!snap.metadata.fromCache) { state.stale = false; clearTimeout(state.loadTimer); }
+      ensureRowSubs(); renderAll();
+    }, err => { state.loaded.tabs = true; state.saveError = 'No se pudieron leer las pestañas: ' + err.code; renderAll(); });
+    subscribe('settings', db.doc('settings/global'), snap => {
+      state.settings = snap.exists ? migrateSettings(snap.data()) : JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+      state.loaded.settings = true; applyStatusVars(); renderAll();
+    }, () => { state.loaded.settings = true; });
+    ensureRowSubs();
+  }
+
+  function migrateSettings(s) {
+    const out = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+    if (s && s.statusColors) for (const k of C.ESTADOS) { const c = s.statusColors[k]; if (c && C.esHex(c.fg) && C.esHex(c.bg)) out.statusColors[k] = { fg: c.fg, bg: c.bg }; }
+    out.updatedBy = s && s.updatedBy || null; out.updatedAt = s && s.updatedAt || null;
+    return out;
+  }
+  function subscribe(key, ref, next, error) { if (state.subs[key]) return; state.subs[key] = ref.onSnapshot(next, error || (e => { state.saveError = e.code; renderAll(); })); }
+  function allTabIds() { const ids = FIXED_TABS.map(t => t.id); for (const id of Object.keys(state.tabs)) if (!ids.includes(id)) ids.push(id); return ids; }
+  function ensureRowSubs() {
+    if (!state.db) return;
+    for (const id of allTabIds()) {
+      if (!state.source[id]) state.source[id] = new Map();
+      if (!state.overlay[id]) state.overlay[id] = new Map();
+      subscribe('src:' + id, state.db.collection(`source/${id}/rows`), snap => applyChanges(id, 'source', snap));
+      subscribe('ov:' + id, state.db.collection(`overlay/${id}/rows`), snap => applyChanges(id, 'overlay', snap));
+    }
+  }
+  function applyChanges(tabId, kind, snap) {
+    const map = state[kind][tabId];
+    const changes = snap.docChanges();
+    changes.forEach(ch => { if (ch.type === 'removed') map.delete(ch.doc.id); else map.set(ch.doc.id, ch.doc.data()); });
+    const visible = state.activeTab === tabId || state.activeTab === 'consolidada';
+    if (!visible) { renderTabsBar(); return; }
+    const onlyModified = changes.length > 0 && changes.every(c => c.type === 'modified') && !rangeChanged();
+    if (onlyModified && changes.length <= 12) changes.forEach(c => renderRow(tabId, c.doc.id)); else renderAll();
+    if (onlyModified) { renderTabHead(); renderChanges(); renderGenerator(); }
+  }
+  let lastRange = null;
+  function rangeChanged() { const r = currentRange(); const same = lastRange && r && lastRange.qFrom === r.qFrom && lastRange.qTo === r.qTo; return !same; }
+
+  // ---------- modelo de vista ----------
+  function tabRows(tabId) {
+    const src = state.source[tabId] || new Map(), ov = state.overlay[tabId] || new Map();
+    const keys = new Set([...src.keys(), ...ov.keys()]);
+    const rows = [];
+    for (const k of keys) {
+      const s = src.get(k) || null, o = ov.get(k) || null;
+      if (!s && !(o && o.added)) continue; // overlay huérfano
+      const e = C.efectiva(s, o); e.rowKey = k; e.tab = tabId;
+      if (s && s.hiddenBySource) { e.hidden = true; e.hiddenBySource = true; }
+      rows.push(e);
+    }
+    rows.sort((a, b) => (a.orden ?? 9999) - (b.orden ?? 9999) || String(a.name).localeCompare(String(b.name)));
+    return rows;
+  }
+  function visibleRows() {
+    const ids = state.activeTab === 'consolidada' ? orderedTabIds() : [state.activeTab];
+    let rows = ids.flatMap(id => tabRows(id));
+    if (!state.me.canEdit) rows = rows.filter(r => !r.hidden);
+    const q = state.query.trim().toLowerCase();
+    if (q) rows = rows.filter(r => [r.name, r.area, r.responsable, r.status, r.statusRaw, r.objetivo].some(v => String(v || '').toLowerCase().includes(q)));
+    return rows;
+  }
+  function orderedTabIds() {
+    const ids = allTabIds();
+    return ids.sort((a, b) => (tabOrder(a) - tabOrder(b)) || a.localeCompare(b));
+  }
+  function tabOrder(id) { const fixed = FIXED_TABS.findIndex(t => t.id === id); if (fixed >= 0) return fixed + 1; const t = state.tabs[id]; return (t && t.orden) || 90; }
+  function tabName(id) { const f = FIXED_TABS.find(t => t.id === id); if (f) return f.name; const t = state.tabs[id]; return t ? t.name : id; }
+  function currentRange() {
+    const ids = state.activeTab === 'consolidada' ? orderedTabIds() : [state.activeTab];
+    let from = null, to = null;
+    for (const id of ids) {
+      const t = state.tabs[id];
+      if (t && t.monthFrom && t.monthTo) { from = from === null ? t.monthFrom : Math.min(from, t.monthFrom); to = to === null ? t.monthTo : Math.max(to, t.monthTo); }
+      else for (const r of tabRows(id)) if (r.qStart !== null && r.qStart !== undefined) { const a = C.deQuincena(r.qStart), b = C.deQuincena(r.qEnd); const ma = C.mesIndice(a.y, a.m), mb = C.mesIndice(b.y, b.m); from = from === null ? ma : Math.min(from, ma); to = to === null ? mb : Math.max(to, mb); }
+    }
+    // Las ediciones pueden salirse del rango del Sheet: se amplía a lo que haya dibujado.
+    for (const id of ids) for (const r of tabRows(id)) if (r.qStart !== null && r.qStart !== undefined) { const a = C.deQuincena(r.qStart), b = C.deQuincena(r.qEnd); const ma = C.mesIndice(a.y, a.m), mb = C.mesIndice(b.y, b.m); if (from === null || ma < from) from = ma; if (to === null || mb > to) to = mb; }
+    if (from === null) return null;
+    return { from, to, qFrom: from * 2, qTo: to * 2 + 1, months: to - from + 1 };
+  }
+  function referenceQ() { if (state.scenario) return C.quincenaDeISO(state.scenario); return C.quincenaDeFecha(new Date()); }
+
+  // ---------- render ----------
+  function renderShell() {
+    const root = $('#app');
+    root.replaceChildren(
+      h('header', { class: 'topbar' },
+        h('div', { class: 'topbar-row' },
+          h('div', { class: 'brand' }, h('span', { class: 'z', text: 'Zensy' }), h('span', { class: 't', text: 'Roadmap' })),
+          h('nav', { class: 'tabs', id: 'tabs', 'aria-label': 'Áreas', role: 'tablist' }),
+          h('div', { class: 'spacer' }),
+          h('div', { id: 'topctrls', style: { display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' } }),
+        ),
+        h('div', { id: 'scenario-banner' })),
+      h('div', { id: 'notices' }),
+      h('section', { id: 'tabhead', class: 'tabhead' }),
+      h('div', { id: 'toolbar', class: 'toolbar' }),
+      h('div', { id: 'table' }),
+      h('div', { id: 'legend', class: 'legend' }),
+      h('div', { id: 'changes' }),
+      h('section', { id: 'generator' }),
+      h('dialog', { class: 'sheet', id: 'dlg' }),
+    );
+  }
+  function renderAll() { renderTabsBar(); renderTopCtrls(); renderScenarioBanner(); renderNotices(); renderTabHead(); renderToolbar(); renderTable(); renderLegend(); renderChanges(); renderGenerator(); }
+
+  function renderTabsBar() {
+    const nav = $('#tabs'); if (!nav) return;
+    const items = [{ id: 'consolidada', name: 'Consolidada' }, ...orderedTabIds().map(id => ({ id, name: tabName(id) }))];
+    nav.replaceChildren(...items.map(t => {
+      const n = t.id === 'consolidada' ? orderedTabIds().reduce((a, id) => a + tabRows(id).filter(r => !r.hidden).length, 0) : tabRows(t.id).filter(r => !r.hidden).length;
+      return h('button', { class: 'tab', role: 'tab', 'aria-selected': String(state.activeTab === t.id), onclick: () => { state.activeTab = t.id; if (location.hash !== '#' + t.id) location.hash = t.id; renderAll(); } }, t.name, n ? h('span', { class: 'n', text: String(n) }) : null);
+    }));
+  }
+  function renderTopCtrls() {
+    const box = $('#topctrls'); if (!box) return;
+    const scen = h('label', { class: 'ctrl', title: 'Fijar una fecha de escenario para presentar' }, 'Escenario', h('input', { type: 'date', id: 'scenario-input', value: state.scenario || '', onchange: e => { const v = e.target.value; if (v && C.parseISO(v)) { state.scenario = v; lsSet('rz-escenario', v); } else { state.scenario = null; lsSet('rz-escenario', null); } renderAll(); } }));
+    const save = h('span', { class: 'status-pill', 'data-state': state.saveState === 'error' ? 'error' : state.saving > 0 ? 'saving' : state.saveState === 'saved' ? 'saved' : 'idle', id: 'save-pill' },
+      h('span', { class: 'dot' }), state.saveState === 'error' ? 'No se guardó' : !state.db ? 'Sin conexión' : !canEdit() ? 'Solo lectura' : state.saving > 0 ? 'Guardando' : state.saveState === 'saved' ? 'Guardado' : 'Al día');
+    const kids = [scen, save];
+    if (canEdit()) {
+      kids.push(h('button', { class: 'ctrl tint', onclick: () => openRowDialog(null) }, '+ Iniciativa'));
+      kids.push(h('button', { class: 'ctrl icon', title: 'Colores de estado', 'aria-label': 'Colores de estado', onclick: openSettingsDialog, html: ICON.gear }));
+    }
+    box.replaceChildren(...kids);
+  }
+  function canEdit() { return !!(state.db && state.me.canEdit); }
+  function renderScenarioBanner() {
+    const el = $('#scenario-banner'); if (!el) return;
+    if (!state.scenario) { el.replaceChildren(); return; }
+    const r = currentRange(); const q = C.quincenaDeISO(state.scenario); const fuera = r && (q < r.qFrom || q > r.qTo);
+    el.replaceChildren(h('div', { class: 'scenario-banner' + (fuera ? ' warn' : '') },
+      h('span', null, `Escenario fijado al ${fmtFecha(state.scenario)}.` + (fuera ? ' Esa fecha cae fuera del rango de esta pestaña; no se dibuja la línea.' : ' La línea punteada marca esa quincena; la línea continua sigue siendo hoy.')),
+      h('button', { class: 'ctrl', onclick: () => { state.scenario = null; lsSet('rz-escenario', null); renderAll(); } }, 'Volver a hoy')));
+  }
+  function renderNotices() {
+    const el = $('#notices'); if (!el) return; const kids = [];
+    if (state.dbMissing) kids.push(h('div', { class: 'alert info' }, 'Para ver el roadmap inicia sesión con tu cuenta de la organización y abre el enlace desde claude.ai.'));
+    else if (state.db && state.loaded.tabs && state.me.id === null) kids.push(h('div', { class: 'alert info' }, 'Esta vista no tiene identidad: inicia sesión con tu cuenta de la organización para ver los datos.'));
+    if (state.stale) kids.push(h('div', { class: 'alert' }, 'Los datos todavía no se pueden leer. Lo que se muestra puede estar desactualizado.'));
+    if (state.saveError) kids.push(h('div', { class: 'alert error' }, state.saveError));
+    el.replaceChildren(...kids);
+  }
+  function renderTabHead() {
+    const el = $('#tabhead'); if (!el) return;
+    const id = state.activeTab; const t = state.tabs[id];
+    const rows = visibleRows(); const marcas = rows.reduce((a, r) => a + ((r.flags || []).length ? 1 : 0), 0);
+    const r = currentRange();
+    const rango = r ? `${C.etiquetaMes(Math.floor((r.from - 1) / 12), ((r.from - 1) % 12) + 1, true)} a ${C.etiquetaMes(Math.floor((r.to - 1) / 12), ((r.to - 1) % 12) + 1, true)}` : 'sin fechas';
+    const meta = [];
+    if (id === 'consolidada') {
+      meta.push(h('span', null, h('b', { text: String(rows.length) }), ' iniciativas de ', h('b', { text: String(orderedTabIds().filter(x => tabRows(x).length).length) }), ' áreas'));
+      meta.push(h('span', null, 'Rango ', h('b', { text: rango })));
+    } else {
+      meta.push(h('span', null, 'Responsable ', h('b', { text: t && t.responsable ? t.responsable : 'sin dato' })));
+      const corte = t && t.fechaCorte; const dias = corte ? Math.round((Date.now() - Date.parse(corte)) / 86400000) : null;
+      meta.push(h('span', null, 'Fecha de corte ', corte ? h('b', { text: fmtFecha(corte) }) : h('b', { text: 'sin dato' }), dias !== null && dias > 30 ? h('span', { class: 'chip-warn', style: { marginLeft: '6px' } }, `${dias} días`) : (corte ? null : h('span', { class: 'chip-warn', style: { marginLeft: '6px' } }, 'sin corte'))));
+      meta.push(h('span', null, 'Fuente ', h('b', { text: t && t.fuente ? t.fuente : (t ? 'Sheet Roadmap Zensy' : 'sin ingesta') })));
+      meta.push(h('span', null, 'Rango ', h('b', { text: rango })));
+      meta.push(h('span', null, h('b', { text: String(rows.length) }), ' iniciativas', marcas ? ['; ', h('b', { text: String(marcas) }), ' con marca'] : null));
+      if (t && t.ingestedAt) meta.push(h('span', null, 'Actualizado ', h('b', { text: fmtFechaHora(t.ingestedAt) })));
+    }
+    el.replaceChildren(h('div', null, h('h1', { text: id === 'consolidada' ? 'Roadmap consolidado' : tabName(id) }), h('div', { class: 'meta' }, ...meta)));
+  }
+  function renderToolbar() {
+    const el = $('#toolbar'); if (!el) return;
+    const search = h('label', { class: 'search' }, h('span', { class: 'note', text: 'Buscar' }), h('input', { id: 'q', type: 'search', placeholder: 'iniciativa, responsable, estado', value: state.query, oninput: e => { state.query = e.target.value; renderTable(); renderTabHead(); } }));
+    const gantt = h('button', { class: 'ctrl', id: 'toggle-gantt', onclick: () => { document.body.classList.toggle('show-gantt'); renderToolbar(); } }, document.body.classList.contains('show-gantt') ? 'Ocultar Gantt' : 'Ver Gantt');
+    gantt.style.display = window.matchMedia('(max-width: 760px)').matches ? '' : 'none';
+    el.replaceChildren(search, gantt);
+  }
+
+  function renderTable() {
+    const box = $('#table'); if (!box) return;
+    const r = currentRange(); lastRange = r;
+    if (state.db && !state.loaded.tabs && !state.stale) { box.replaceChildren(h('div', { class: 'tablewrap' }, h('div', { class: 'skeleton' }, ...[0, 1, 2, 3, 4].map(() => h('div', { class: 'sk', style: { width: (55 + Math.random() * 40) + '%' } }))))); return; }
+    const rows = visibleRows();
+    if (!rows.length) {
+      const name = state.activeTab === 'consolidada' ? 'ninguna pestaña' : tabName(state.activeTab);
+      box.replaceChildren(h('div', { class: 'tablewrap' }, h('div', { class: 'empty-state' },
+        h('h3', { text: state.query ? 'Ninguna iniciativa coincide con la búsqueda' : 'Esta pestaña aún no tiene datos' }),
+        h('p', { text: state.query ? 'Prueba con otro texto.' : `Pide la actualización de ${name} desde el Sheet "Roadmap Zensy"; la pestaña se llena con lo que haya ahí.` }))));
+      return;
+    }
+    const qRef = referenceQ(); const qToday = C.quincenaDeFecha(new Date());
+    const nQ = r ? r.qTo - r.qFrom + 1 : 0;
+    // cabecera
+    const trMonths = h('tr', { class: 'months' },
+      h('th', { class: 'fix c-name', rowspan: 2, text: 'Iniciativa' }), h('th', { class: 'fix c-area', rowspan: 2, text: 'Área' }),
+      h('th', { class: 'fix c-status', rowspan: 2, text: 'Estado' }), h('th', { class: 'fix c-golive', rowspan: 2, text: 'Go live' }),
+      h('th', { class: 'fix c-start', rowspan: 2, text: 'Inicio' }), h('th', { class: 'fix c-prod last', rowspan: 2, text: 'Salida a prod.' }));
+    const trHalves = h('tr', { class: 'halves' });
+    if (r) for (let m = r.from; m <= r.to; m++) {
+      const y = Math.floor((m - 1) / 12), mo = ((m - 1) % 12) + 1;
+      trMonths.append(h('th', { class: 'gh', colspan: 2, text: C.etiquetaMes(y, mo, true) }));
+      for (let half = 0; half < 2; half++) { const q = m * 2 + half; trHalves.append(h('th', { class: 'gq' + (half === 0 ? ' first' : '') + (q === qToday ? ' today' : '') + (state.scenario && q === qRef ? ' scen' : ''), text: half === 0 ? 'S-1' : 'S-2', title: half === 0 ? 'Días 1 a 15' : 'Del 16 en adelante' })); }
+    }
+    trMonths.append(h('th', { class: 'acts', rowspan: 2, text: '' }));
+    const tbody = h('tbody');
+    for (const row of rows) tbody.append(buildRow(row, r, nQ, qRef, qToday));
+    const table = h('table', { class: 'rm' }, h('thead', null, trMonths, trHalves), tbody);
+    box.replaceChildren(h('div', { class: 'tablewrap', id: 'tablewrap' }, table));
+  }
+  function renderRow(tabId, rowKey) {
+    const tr = document.getElementById(`r-${tabId}-${rowKey}`); if (!tr) { renderTable(); return; }
+    const row = tabRows(tabId).find(x => x.rowKey === rowKey);
+    if (!row || (row.hidden && !state.me.canEdit)) { renderTable(); return; }
+    const r = currentRange(); const qRef = referenceQ(); const qToday = C.quincenaDeFecha(new Date());
+    tr.replaceWith(buildRow(row, r, r ? r.qTo - r.qFrom + 1 : 0, qRef, qToday));
+  }
+
+  function buildRow(row, r, nQ, qRef, qToday) {
+    const editable = canEdit();
+    const flags = row.flags || [];
+    const tr = h('tr', { id: `r-${row.tab}-${row.rowKey}`, class: row.hidden ? 'hidden-row' : null });
+    // marcas
+    const marks = h('span', { class: 'marks' });
+    if (row.added) marks.append(h('span', { class: 'mark filled', title: 'Agregada por el equipo' }));
+    else if (row.sinDetalle) marks.append(h('span', { class: 'mark hollow', title: 'Sin detalle en la fuente (objetivo, responsable o link)' }));
+    if (row.modified) marks.append(h('span', { class: 'mark square', title: 'Modificada respecto al archivo' }));
+    if (flags.length) marks.append(h('span', { class: 'mark warn', title: flags.map(f => f.msg).join('\n') }));
+    if (row.sourceChanged) marks.append(h('span', { class: 'mark changed', title: 'La fuente cambió después de una edición: ' + row.sourceChanged.changes.map(c => c.field).join(', ') }));
+    const sub = [];
+    if (state.activeTab === 'consolidada' && row.area && row.area !== tabName(row.tab)) sub.push(row.area);
+    if (row.responsable) sub.push(row.responsable);
+    if (row.hidden) sub.push(row.hiddenBySource ? 'Oculta: épica Rejected en Jira' : 'Oculta por el equipo');
+    tr.append(h('td', { class: 'fix c-name' }, h('div', { class: 'name-cell' }, marks, h('div', { class: 'nm' }, row.link ? h('a', { href: row.link, target: '_blank', rel: 'noopener', text: row.name || 'sin nombre', style: { color: 'inherit', textDecoration: 'none' } }) : (row.name || 'sin nombre'), sub.length ? h('span', { class: 'sub', text: sub.join(' · ') }) : null))));
+    // área
+    const areaTxt = state.activeTab === 'consolidada' ? tabName(row.tab) : (row.area || '');
+    tr.append(h('td', { class: 'fix c-area' }, areaTxt ? h('span', { class: 'label', style: { fontWeight: 600 }, text: areaTxt }) : h('span', { class: 'sindato', text: 'sin dato' })));
+    // estado
+    tr.append(h('td', { class: 'fix c-status' }, statusCell(row, editable)));
+    // go live
+    tr.append(h('td', { class: 'fix c-golive' }, goLiveCell(row, editable)));
+    // inicio / salida
+    tr.append(h('td', { class: 'fix c-start tnum' }, row.inicio ? fmtFecha(row.inicio) : h('span', { class: 'sindato', text: 'sin dato' })));
+    tr.append(h('td', { class: 'fix c-prod last tnum' }, row.salidaProd ? fmtFecha(row.salidaProd) : (row.salidaProdRaw ? h('span', { class: 'sindato', title: 'Valor literal de la fuente, no es una fecha', text: row.salidaProdRaw }) : h('span', { class: 'sindato', text: 'sin dato' }))));
+    // gantt
+    const g = h('div', { class: 'gwrap', style: { width: (nQ * QW) + 'px' } });
+    if (r) {
+      const bars = (row.phases || []).filter(p => p.qStart !== null && p.qStart !== undefined && p.qEnd !== null && p.qEnd !== undefined);
+      if (!bars.length) g.append(h('span', { class: 'empty', text: (row.phases || []).some(p => p.startRaw || p.endRaw) ? 'fechas no legibles' : 'sin fechas' }));
+      const col = statusColor(row.status) || { fg: '#4A4A55', bg: '#EEEEF1' };
+      for (const p of bars) {
+        const left = (p.qStart - r.qFrom) * QW + 2, width = (p.qEnd - p.qStart + 1) * QW - 4;
+        if (width <= 0) continue;
+        const strong = row.status === 'En progreso';
+        const showLabel = !!p.label && width >= 56; // una sola quincena no tiene sitio para el texto; queda en el tooltip
+        g.append(h('div', { class: 'bar' + (showLabel ? '' : ' nolabel'), style: { left: left + 'px', width: width + 'px', background: strong ? 'var(--pink-500)' : col.bg, color: strong ? '#fff' : col.fg, borderColor: strong ? 'var(--pink-500)' : col.fg }, title: `${p.label || row.name}: ${p.start ? fmtFecha(p.start) : p.startRaw || '?'} a ${p.end ? fmtFecha(p.end) : p.endRaw || '?'}`, text: showLabel ? p.label : '' }));
+      }
+      if (qToday >= r.qFrom && qToday <= r.qTo) g.append(h('div', { class: 'today', style: { left: ((qToday - r.qFrom + 0.5) * QW) + 'px' }, title: 'Hoy' }));
+      if (state.scenario && qRef !== qToday && qRef >= r.qFrom && qRef <= r.qTo) g.append(h('div', { class: 'scen', style: { left: ((qRef - r.qFrom + 0.5) * QW) + 'px' }, title: 'Escenario' }));
+    }
+    tr.append(h('td', { class: 'gantt', colspan: Math.max(nQ, 1) }, g));
+    // acciones
+    const acts = h('td', { class: 'acts' });
+    if (state.comments && !state.commentsOff) acts.append(h('button', { class: 'iconbtn', title: 'Comentar esta fila', 'aria-label': 'Comentar', html: ICON.comment, onclick: () => commentRow(tr) }));
+    if (editable) acts.append(h('button', { class: 'iconbtn', title: 'Editar', 'aria-label': 'Editar', html: ICON.pencil, onclick: () => openRowDialog(row) }));
+    tr.append(acts);
+    return tr;
+  }
+  function badgeStyle(st) { const c = statusColor(st); return c ? { background: c.bg, color: c.fg } : null; }
+  function statusCell(row, editable) {
+    if (editable) {
+      const sel = h('select', { class: 'badge badge-select', 'aria-label': 'Estado', style: badgeStyle(row.status) || { background: 'var(--surface-2)', color: 'var(--muted)' }, onchange: e => queueWrite(row, 'status', e.target.value) });
+      if (!row.status) sel.append(h('option', { value: '', text: row.statusRaw ? row.statusRaw + ' (fuera de lista)' : 'sin estado' }));
+      for (const s of C.ESTADOS) sel.append(h('option', { value: s, text: s, selected: row.status === s }));
+      return sel;
+    }
+    if (row.status) return h('span', { class: 'badge', style: badgeStyle(row.status), text: row.status });
+    if (row.statusRaw) return h('span', { class: 'badge raw', title: 'Valor literal de la fuente, fuera de la lista de seis', text: row.statusRaw });
+    return h('span', { class: 'badge none', text: 'sin estado' });
+  }
+  function goLiveCell(row, editable) {
+    const conf = row.confianza || ''; const cls = conf === 'Confirmada' ? 'ok' : conf === 'En observación' ? 'obs' : '';
+    const label = conf || 'Sin confirmar';
+    if (editable) {
+      return h('div', { class: 'golive', style: { flexDirection: 'column', alignItems: 'flex-start', gap: '2px' } },
+        h('input', { class: 'inline-input', type: 'text', value: row.goLiveMes || '', placeholder: 'mes año', 'aria-label': 'Go live (mes)', oninput: e => queueWrite(row, 'goLiveMes', e.target.value.trim()) }),
+        h('div', { class: 'golive' }, h('span', { class: 'sem ' + cls }), h('select', { class: 'inline-input conf', 'aria-label': 'Confianza en la fecha', onchange: e => queueWrite(row, 'confianza', e.target.value) }, ...['', ...C.CONFIANZAS].map(c => h('option', { value: c, text: c || 'Sin confirmar', selected: conf === c })))));
+    }
+    return h('div', { class: 'golive' }, h('span', { class: 'sem ' + cls, title: label }), h('div', null, h('div', { class: 'txt', text: row.goLiveMes || 'sin dato' }), h('div', { class: 'conf ' + cls, text: label })));
+  }
+  function renderLegend() {
+    const el = $('#legend'); if (!el) return;
+    el.replaceChildren(
+      h('span', { class: 'it' }, h('span', { class: 'mark hollow' }), 'Sin detalle en la fuente'),
+      h('span', { class: 'it' }, h('span', { class: 'mark square' }), 'Modificada por el equipo'),
+      h('span', { class: 'it' }, h('span', { class: 'mark filled' }), 'Agregada por el equipo'),
+      h('span', { class: 'it' }, h('span', { class: 'mark warn' }), 'Dato sospechoso en la fuente'),
+      h('span', { class: 'it' }, h('span', { class: 'mark changed' }), 'La fuente cambió tras una edición'),
+      h('span', { class: 'it' }, h('span', { class: 'swatch' }), 'Hoy'),
+      h('span', { class: 'it' }, h('span', { class: 'swatch dash' }), 'Escenario'),
+      h('span', { class: 'it' }, h('span', { class: 'sem ok' }), 'Fecha confirmada'), h('span', { class: 'it' }, h('span', { class: 'sem obs' }), 'En observación'), h('span', { class: 'it' }, h('span', { class: 'sem' }), 'Sin confirmar'));
+  }
+
+  // ---------- quién cambió qué ----------
+  async function renderChanges() {
+    const el = $('#changes'); if (!el) return;
+    const ids = state.activeTab === 'consolidada' ? orderedTabIds() : [state.activeTab];
+    const items = [];
+    for (const id of ids) for (const [k, ov] of (state.overlay[id] || new Map())) {
+      const src = (state.source[id] || new Map()).get(k); const name = (ov.fields && ov.fields.name && ov.fields.name.value) || (src && src.name) || k;
+      for (const [f, c] of Object.entries(ov.fields || {})) items.push({ tab: id, key: k, name, field: f, by: c.by, at: c.at, prev: c.prev, value: c.value, added: !!ov.added });
+      if (ov.hidden && ov.hidden.value) items.push({ tab: id, key: k, name, field: 'oculta', by: ov.hidden.by, at: ov.hidden.at, prev: null, value: true });
+    }
+    if (!items.length) { el.replaceChildren(); return; }
+    items.sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
+    const ids2 = [...new Set(items.map(i => i.by).filter(Boolean))];
+    let names = {}; if (state.user && ids2.length) { try { names = await state.user.profiles(ids2); } catch (e) { names = {}; } }
+    const list = h('div', { class: 'changes' }, ...items.slice(0, 60).map(i => h('div', { class: 'chg' },
+      h('div', { class: 'what' }, h('b', { text: i.name }), ` · ${FIELD_LABEL[i.field] || i.field}`, i.added ? ' (iniciativa agregada)' : ''),
+      h('div', { class: 'who', text: `${(names[i.by] && names[i.by].name) || 'Alguien'} · ${i.at ? fmtFechaHora(i.at) : ''}` }),
+      h('div', { class: 'val', style: { gridColumn: '1 / -1' } }, i.field === 'oculta' ? 'Fila oculta' : i.field === 'phases' ? 'Barras del Gantt editadas' : [valueText(i.prev) ? ['Antes: ', h('b', { text: valueText(i.prev) }), ' · '] : null, 'Ahora: ', h('b', { text: valueText(i.value) || 'vacío' })]))));
+    el.replaceChildren(h('details', { class: 'section', id: 'changes-details', open: lsGet('rz-changes-open') === '1' || null, ontoggle: e => lsSet('rz-changes-open', e.target.open ? '1' : '0') }, h('summary', null, h('div', null, h('h2', { text: 'Quién cambió qué' }), h('p', { class: 'note', text: `${items.length} cambios de presentación sobre la fuente. Cada uno se puede revertir desde el lápiz de su fila.` }))), list));
+  }
+  const FIELD_LABEL = { name: 'Nombre', status: 'Estado', goLiveMes: 'Go live', confianza: 'Semáforo', responsable: 'Responsable', objetivo: 'Objetivo', dependencias: 'Dependencias', salidaProd: 'Salida a producción', phases: 'Barras del Gantt', area: 'Área' };
+  const valueText = v => v === null || v === undefined ? '' : Array.isArray(v) ? `${v.length} barra(s)` : String(v);
+
+  // ---------- escritura ----------
+  function overlayRef(tab, key) { return state.db.doc(`overlay/${tab}/rows/${key}`); }
+  function queueWrite(row, field, value) {
+    const k = `${row.tab}/${row.rowKey}/${field}`;
+    clearTimeout(state.debounces[k]);
+    state.debounces[k] = setTimeout(() => writeField(row.tab, row.rowKey, field, value), 1200);
+    state.saveState = 'pending'; renderTopCtrls();
+  }
+  function enqueue(docPath, fn) {
+    const prev = state.writeQueues[docPath] || Promise.resolve();
+    const next = prev.catch(() => { }).then(fn);
+    state.writeQueues[docPath] = next; return next;
+  }
+  async function writeField(tab, key, field, value) {
+    if (!canEdit()) return;
+    const src = (state.source[tab] || new Map()).get(key); const ov = (state.overlay[tab] || new Map()).get(key);
+    const srcVal = src ? src[field] : undefined;
+    // Si vuelve al valor de la fuente, es una reversión.
+    if (src && JSON.stringify(srcVal ?? '') === JSON.stringify(value ?? '')) return revertField(tab, key, field);
+    const cur = ov && ov.fields && ov.fields[field];
+    if (cur && JSON.stringify(cur.value) === JSON.stringify(value)) return;
+    const entry = { value, by: state.me.id, at: new Date().toISOString(), prev: srcVal ?? null };
+    return doWrite(`overlay/${tab}/rows/${key}`, async () => {
+      const ref = overlayRef(tab, key);
+      if (ov) await ref.update({ fields: { [field]: entry } });
+      else await ref.set({ v: 1, fields: { [field]: entry } });
+    });
+  }
+  async function revertField(tab, key, field) {
+    const ov = (state.overlay[tab] || new Map()).get(key); if (!ov || !ov.fields || !(field in ov.fields)) return;
+    const next = JSON.parse(JSON.stringify(ov)); delete next.fields[field];
+    return doWrite(`overlay/${tab}/rows/${key}`, async () => {
+      const ref = overlayRef(tab, key);
+      const vacio = !Object.keys(next.fields).length && !(next.hidden && next.hidden.value) && !next.added;
+      if (vacio) await ref.delete(); else await ref.set(next);
+    });
+  }
+  async function setHidden(tab, key, hidden) {
+    const ov = (state.overlay[tab] || new Map()).get(key);
+    return doWrite(`overlay/${tab}/rows/${key}`, async () => {
+      const ref = overlayRef(tab, key);
+      if (ov && ov.added && hidden) { await ref.delete(); return; } // una agregada se borra de verdad
+      const entry = { value: !!hidden, by: state.me.id, at: new Date().toISOString() };
+      if (!hidden) { if (!ov) return; const next = JSON.parse(JSON.stringify(ov)); delete next.hidden; const vacio = !Object.keys(next.fields || {}).length && !next.added; if (vacio) await ref.delete(); else await ref.set(next); return; }
+      if (ov) await ref.update({ hidden: entry }); else await ref.set({ v: 1, fields: {}, hidden: entry });
+    });
+  }
+  async function addInitiative(tab, fields) {
+    const key = C.rowKey(fields.name) + '-' + Date.now().toString(36).slice(-4);
+    const at = new Date().toISOString(); const f = {};
+    for (const [k, v] of Object.entries(fields)) if (v !== '' && v !== null && v !== undefined && !(Array.isArray(v) && !v.length)) f[k] = { value: v, by: state.me.id, at, prev: null };
+    return doWrite(`overlay/${tab}/rows/${key}`, () => overlayRef(tab, key).set({ v: 1, added: true, fields: f, createdBy: state.me.id, createdAt: at }));
+  }
+  async function doWrite(path, fn) {
+    state.saving++; state.saveState = 'saving'; state.saveError = ''; renderTopCtrls();
+    try { await enqueue(path, fn); state.saveState = 'saved'; }
+    catch (e) {
+      state.saveState = 'error';
+      state.saveError = e && e.code === 'invalid_argument' ? 'No se guardó: tu cuenta no tiene permiso de edición en este roadmap.' : e && e.code === 'quota_exceeded' ? 'No se guardó: la base de datos del roadmap está llena.' : `No se guardó (${e && e.code ? e.code : 'error'}).`;
+      if (e && e.code === 'invalid_argument') { state.me.canEdit = false; renderAll(); }
+    }
+    finally { state.saving--; renderTopCtrls(); renderNotices(); }
+  }
+
+  // ---------- diálogo de fila ----------
+  function openRowDialog(row) {
+    const dlg = $('#dlg'); const isNew = !row;
+    const tab = isNew ? (state.activeTab === 'consolidada' ? (orderedTabIds()[0] || 'producto') : state.activeTab) : row.tab;
+    const src = isNew ? null : (state.source[row.tab] || new Map()).get(row.rowKey);
+    const ov = isNew ? null : (state.overlay[row.tab] || new Map()).get(row.rowKey);
+    const changed = f => !!(ov && ov.fields && ov.fields[f]);
+    const vals = { name: row ? row.name : '', responsable: row ? row.responsable || '' : '', area: row ? row.area || '' : tabName(tab), status: row ? row.status || '' : 'Discovery', goLiveMes: row ? row.goLiveMes || '' : '', confianza: row ? row.confianza || '' : '', objetivo: row ? row.objetivo || '' : '', dependencias: row ? row.dependencias || '' : '', salidaProd: row ? row.salidaProd || '' : '', phases: row ? JSON.parse(JSON.stringify((row.phases || []).map(p => ({ label: p.label || '', start: p.start || '', end: p.end || '' })))) : [] };
+    const pending = {};
+    const field = (f, label, input, extra) => h('div', { class: 'frow' }, h('label', { class: 'field' + (extra && extra.err ? ' err' : '') }, h('span', { class: 'l' }, label, changed(f) ? h('span', { class: 'note', style: { color: 'var(--pink-700)' } }, ' · modificado') : null), input),
+      h('button', { class: 'revert', type: 'button', disabled: !changed(f), onclick: async () => { await revertField(tab, row.rowKey, f); dlg.close(); } }, 'Revertir'));
+    const txt = (f, attrs) => h('input', Object.assign({ type: 'text', value: vals[f], oninput: e => { pending[f] = e.target.value; } }, attrs || {}));
+    const areaOptions = [...new Set([...C.AREAS_FIJAS, ...Array.from((state.source[tab] || new Map()).values()).map(d => d.area).filter(Boolean), tabName(tab), vals.area].filter(Boolean))];
+    const phasesBox = h('div', { class: 'phases' });
+    const renderPhases = () => {
+      phasesBox.replaceChildren(...vals.phases.map((p, i) => h('div', { class: 'phase' },
+        h('label', { class: 'field' }, h('span', { class: 'l', text: 'Fase' }), h('input', { type: 'text', value: p.label, oninput: e => { p.label = e.target.value; pending.phases = true; } })),
+        h('label', { class: 'field' }, h('span', { class: 'l', text: 'Inicio' }), h('input', { type: 'date', value: p.start, onchange: e => { p.start = e.target.value; pending.phases = true; } })),
+        h('label', { class: 'field' }, h('span', { class: 'l', text: 'Fin' }), h('input', { type: 'date', value: p.end, onchange: e => { p.end = e.target.value; pending.phases = true; } })),
+        h('button', { class: 'del', type: 'button', 'aria-label': 'Quitar fase', title: 'Quitar fase', html: ICON.close, onclick: () => { vals.phases.splice(i, 1); pending.phases = true; renderPhases(); } }))),
+        h('div', null, h('button', { class: 'ctrl', type: 'button', onclick: () => { vals.phases.push({ label: '', start: '', end: '' }); pending.phases = true; renderPhases(); } }, '+ Fase')));
+    };
+    renderPhases();
+    const srcInfo = src ? h('div', { class: 'srcnote' }, `Fuente: ${state.tabs[tab] && state.tabs[tab].fuente ? state.tabs[tab].fuente : 'Sheet Roadmap Zensy'} · clave ${row.rowKey}`, src.jira ? ` · Jira ${src.jira.key} (${src.jira.status})` : '') : h('div', { class: 'srcnote', text: isNew ? 'Esta iniciativa no viene de la fuente: quedará marcada como agregada por el equipo.' : 'Agregada por el equipo.' });
+    const flags = row && row.flags && row.flags.length ? h('div', { class: 'flags' }, ...row.flags.map(f => h('div', { class: 'flag' }, h('span', { class: 'mark warn', style: { marginTop: '2px' } }), f.msg))) : null;
+    const errBox = h('div', { class: 'help', hidden: true });
+    const body = h('div', { class: 'dlg-body' },
+      srcInfo, flags,
+      field('name', 'Nombre', txt('name')),
+      h('div', { class: 'grid2' }, field('responsable', 'Responsable', txt('responsable')),
+        field('area', 'Área / equipo', h('select', { onchange: e => { pending.area = e.target.value; } }, ...areaOptions.map(a => h('option', { value: a, text: a, selected: vals.area === a }))))),
+      h('div', { class: 'grid2' },
+        field('status', 'Estado', h('select', { onchange: e => { pending.status = e.target.value; } }, ...(vals.status ? [] : [h('option', { value: '', text: row && row.statusRaw ? row.statusRaw + ' (fuera de lista)' : 'sin estado', selected: true })]), ...C.ESTADOS.map(s => h('option', { value: s, text: s, selected: vals.status === s })))),
+        field('goLiveMes', 'Go live (mes y año)', txt('goLiveMes', { placeholder: 'marzo 2027' }))),
+      h('div', { class: 'grid2' },
+        field('confianza', 'Semáforo de la fecha', h('select', { onchange: e => { pending.confianza = e.target.value; } }, ...['', ...C.CONFIANZAS].map(c => h('option', { value: c, text: c || 'Sin confirmar', selected: vals.confianza === c })))),
+        field('salidaProd', 'Salida a producción', h('input', { type: 'date', value: vals.salidaProd, onchange: e => { pending.salidaProd = e.target.value; } }))),
+      field('objetivo', 'Objetivo', h('textarea', { rows: 2, oninput: e => { pending.objetivo = e.target.value; } }, vals.objetivo)),
+      field('dependencias', 'Dependencias', h('textarea', { rows: 2, oninput: e => { pending.dependencias = e.target.value; } }, vals.dependencias)),
+      h('div', { class: 'frow' }, h('div', null, h('div', { class: 'label', style: { marginBottom: '6px' } }, 'Barras del Gantt (una por fase)', changed('phases') ? h('span', { class: 'note', style: { color: 'var(--pink-700)' } }, ' · modificado') : null), phasesBox),
+        h('button', { class: 'revert', type: 'button', disabled: !changed('phases'), onclick: async () => { await revertField(tab, row.rowKey, 'phases'); dlg.close(); } }, 'Revertir')),
+      errBox);
+    const foot = h('div', { class: 'dlg-foot' },
+      h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } },
+        isNew ? null : h('button', { class: 'ctrl', type: 'button', onclick: async () => { await setHidden(tab, row.rowKey, !row.hidden); dlg.close(); } }, row.hidden ? (row.added ? 'Eliminar' : 'Volver a mostrar') : (row.added ? 'Eliminar iniciativa' : 'Ocultar iniciativa'))),
+      h('div', { style: { display: 'flex', gap: '8px' } },
+        h('button', { class: 'ctrl', type: 'button', onclick: () => dlg.close() }, 'Cancelar'),
+        h('button', { class: 'ctrl primary', type: 'button', onclick: async () => {
+          const fields = {};
+          for (const [k, v] of Object.entries(pending)) if (k !== 'phases') fields[k] = v;
+          if (pending.phases) fields.phases = normalizePhases(vals.phases);
+          const name = fields.name !== undefined ? fields.name : vals.name;
+          if (!String(name || '').trim()) { errBox.hidden = false; errBox.textContent = 'Escribe el nombre de la iniciativa.'; return; }
+          if (fields.phases && fields.phases.some(p => p.start && p.end && p.end < p.start)) { errBox.hidden = false; errBox.textContent = 'Una fase termina antes de empezar; corrige las fechas.'; return; }
+          if (isNew) { fields.name = name; if (!fields.area) fields.area = vals.area; if (!fields.status) fields.status = vals.status; if (fields.phases === undefined) fields.phases = normalizePhases(vals.phases); await addInitiative(tab, fields); }
+          else for (const [k, v] of Object.entries(fields)) await writeField(tab, row.rowKey, k, v);
+          dlg.close();
+        } }, isNew ? 'Agregar' : 'Guardar')));
+    dlg.replaceChildren(h('div', { class: 'dlg-head' }, h('span', { class: 'handle' }), h('h2', { text: isNew ? `Nueva iniciativa en ${tabName(tab)}` : row.name }), h('button', { class: 'iconbtn', type: 'button', 'aria-label': 'Cerrar', html: ICON.close, onclick: () => dlg.close() })), body, foot);
+    dlg.showModal();
+  }
+  function normalizePhases(list) {
+    return list.filter(p => p.label || p.start || p.end).map(p => ({ label: p.label || '', start: p.start || '', end: p.end || '', startRaw: p.start || '', endRaw: p.end || '', qStart: p.start ? C.quincenaDeISO(p.start) : (p.end ? C.quincenaDeISO(p.end) : null), qEnd: p.end ? C.quincenaDeISO(p.end) : (p.start ? C.quincenaDeISO(p.start) : null) }));
+  }
+
+  // ---------- colores de estado ----------
+  function applyStatusVars() {
+    const rs = document.documentElement.style;
+    for (const s of C.ESTADOS) { const c = statusColor(s); const v = statusVar(s); if (c && v) { rs.setProperty(`--st-${v}-fg`, c.fg); rs.setProperty(`--st-${v}-bg`, c.bg); } }
+  }
+  function openSettingsDialog() {
+    const dlg = $('#dlg'); const draft = JSON.parse(JSON.stringify(state.settings.statusColors));
+    const rows = h('div', { class: 'colors' });
+    const err = h('div', { class: 'help', hidden: true });
+    const render = () => rows.replaceChildren(...C.ESTADOS.map(s => {
+      const c = draft[s]; const ratio = C.contraste(c.fg, c.bg);
+      return h('div', { class: 'colorrow' }, h('span', { class: 'badge', style: { background: c.bg, color: c.fg }, text: s }),
+        h('input', { type: 'color', value: c.fg, title: 'Texto', 'aria-label': `Texto de ${s}`, oninput: e => { c.fg = e.target.value; render(); } }),
+        h('input', { type: 'color', value: c.bg, title: 'Fondo', 'aria-label': `Fondo de ${s}`, oninput: e => { c.bg = e.target.value; render(); } }),
+        h('span', { class: 'ratio' + (ratio < 4.5 ? ' bad' : ''), text: ratio.toFixed(2) + ':1' }));
+    }));
+    render();
+    dlg.replaceChildren(h('div', { class: 'dlg-head' }, h('span', { class: 'handle' }), h('h2', { text: 'Colores de estado' }), h('button', { class: 'iconbtn', type: 'button', 'aria-label': 'Cerrar', html: ICON.close, onclick: () => dlg.close() })),
+      h('div', { class: 'dlg-body' }, h('p', { class: 'note', text: 'Cada combinación debe pasar AA 4,5:1; una que no pase no se guarda. El cambio aplica para todos los que abran el roadmap y queda registrado con tu nombre.' }), rows, err,
+        state.settings.updatedAt ? h('p', { class: 'note', text: `Último cambio: ${fmtFechaHora(state.settings.updatedAt)}` }) : null),
+      h('div', { class: 'dlg-foot' }, h('button', { class: 'ctrl', type: 'button', onclick: () => { for (const s of C.ESTADOS) draft[s] = Object.assign({}, C.COLORES_ESTADO[s]); render(); } }, 'Volver a los del kit'),
+        h('div', { style: { display: 'flex', gap: '8px' } }, h('button', { class: 'ctrl', type: 'button', onclick: () => dlg.close() }, 'Cancelar'),
+          h('button', { class: 'ctrl primary', type: 'button', onclick: async () => {
+            const malos = C.ESTADOS.filter(s => C.contraste(draft[s].fg, draft[s].bg) < 4.5);
+            if (malos.length) { err.hidden = false; err.textContent = `No se guardó: ${malos.join(', ')} no llega a 4,5:1. Oscurece el texto o aclara el fondo.`; return; }
+            await doWrite('settings/global', () => state.db.doc('settings/global').set({ v: 1, statusColors: draft, updatedBy: state.me.id, updatedAt: new Date().toISOString() }));
+            dlg.close();
+          } }, 'Guardar'))));
+    dlg.showModal();
+  }
+
+  // ---------- comentarios ----------
+  async function commentRow(tr) {
+    if (!state.comments) return;
+    try { await state.comments.openComposer({ element: tr }); }
+    catch (e) { if (e && (e.code === 'unavailable' || e.code === 'not_granted' || e.code === 'capability_disabled')) { state.commentsOff = true; renderTable(); } }
+  }
+
+  // ---------- generador de diapositiva ----------
+  const gen = { title: 'Estado de entregas', subtitle: '', cutoff: hoyISO(), filter: 'activas', canvas: null };
+  function slideRows() {
+    let rows = visibleRows().filter(r => !r.hidden);
+    if (gen.filter === 'activas') rows = rows.filter(r => r.status !== 'Done');
+    return rows.slice(0, 18).map(r => ({ name: r.name, status: r.status || r.statusRaw || 'sin estado', color: statusColor(r.status) || { fg: '#4A4A55', bg: '#EEEEF1' }, delivery: r.salidaProd ? fmtFecha(r.salidaProd) : (r.goLiveMes || 'sin fecha'), area: state.activeTab === 'consolidada' ? tabName(r.tab) : (r.area || '') }));
+  }
+  function slideModel() {
+    const total = visibleRows().filter(r => !r.hidden && (gen.filter !== 'activas' || r.status !== 'Done')).length;
+    return { title: gen.title || 'Estado de entregas', subtitle: gen.subtitle || (state.activeTab === 'consolidada' ? 'Roadmap consolidado de Zensy' : `Roadmap de ${tabName(state.activeTab)}`), cutoff: gen.cutoff, rows: slideRows(), total };
+  }
+  // Una sola función pinta la vista previa y el archivo: W×H lógico 3200×1800; `scale` adapta al lienzo.
+  function drawSlide(ctx, scale, m) {
+    const W = 3200, H = 1800; ctx.save(); ctx.scale(scale, scale);
+    ctx.fillStyle = '#FBF7F9'; ctx.fillRect(0, 0, W, H);
+    // bloque de marca
+    ctx.fillStyle = '#E90062'; roundRect(ctx, 0, 0, 36, H, 0); ctx.fill();
+    ctx.fillStyle = '#0E0E10'; ctx.textBaseline = 'alphabetic';
+    ctx.font = '800 44px Urbanist, "Segoe UI", Arial, sans-serif'; ctx.fillStyle = '#E90062'; ctx.fillText('ZENSY', 140, 150);
+    ctx.fillStyle = '#0E0E10'; ctx.font = '800 112px Urbanist, "Segoe UI", Arial, sans-serif'; ctx.fillText(m.title, 140, 290);
+    ctx.fillStyle = '#4A4A55'; ctx.font = '600 44px Urbanist, "Segoe UI", Arial, sans-serif'; ctx.fillText(m.subtitle, 140, 365);
+    ctx.textAlign = 'right'; ctx.fillText(`Corte: ${fmtFecha(m.cutoff) || m.cutoff}`, W - 140, 150); ctx.textAlign = 'left';
+    // filas
+    const rows = m.rows; const cols = rows.length > 9 ? 2 : 1; const per = Math.ceil(rows.length / cols) || 1;
+    const top = 470, rowH = Math.min(132, Math.floor((H - top - 160) / per)); const colW = (W - 280 - (cols - 1) * 80) / cols;
+    ctx.font = '600 34px Urbanist, "Segoe UI", Arial, sans-serif';
+    rows.forEach((r, i) => {
+      const c = Math.floor(i / per), j = i % per; const x = 140 + c * (colW + 80), y = top + j * rowH;
+      ctx.fillStyle = '#FFFFFF'; roundRect(ctx, x, y, colW, rowH - 18, 24); ctx.fill(); ctx.strokeStyle = '#E6E6EA'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#0E0E10'; ctx.font = '700 40px Urbanist, "Segoe UI", Arial, sans-serif';
+      ctx.fillText(ellipsize(ctx, r.name, colW - 820), x + 36, y + rowH / 2 + 6);
+      // badge
+      ctx.font = '700 30px Urbanist, "Segoe UI", Arial, sans-serif'; const bw = ctx.measureText(r.status).width + 56; const bx = x + colW - 420 - bw;
+      ctx.fillStyle = r.color.bg; roundRect(ctx, bx, y + rowH / 2 - 34, bw, 56, 28); ctx.fill(); ctx.fillStyle = r.color.fg; ctx.fillText(r.status, bx + 28, y + rowH / 2 + 2);
+      ctx.fillStyle = '#4A4A55'; ctx.font = '600 32px Urbanist, "Segoe UI", Arial, sans-serif'; ctx.textAlign = 'right'; ctx.fillText(r.delivery, x + colW - 36, y + rowH / 2 + 4); ctx.textAlign = 'left';
+    });
+    if (!rows.length) { ctx.fillStyle = '#4A4A55'; ctx.font = '600 48px Urbanist, "Segoe UI", Arial, sans-serif'; ctx.fillText('No hay iniciativas para mostrar con el filtro actual.', 140, top + 80); }
+    ctx.fillStyle = '#4A4A55'; ctx.font = '600 30px Urbanist, "Segoe UI", Arial, sans-serif';
+    ctx.fillText(m.total > rows.length ? `Mostrando ${rows.length} de ${m.total} iniciativas · Roadmap Zensy` : `${rows.length} iniciativas · Roadmap Zensy`, 140, H - 70);
+    ctx.restore();
+  }
+  function roundRect(ctx, x, y, w, h2, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h2, r); ctx.arcTo(x + w, y + h2, x, y + h2, r); ctx.arcTo(x, y + h2, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  function ellipsize(ctx, text, max) { let t = String(text); if (ctx.measureText(t).width <= max) return t; while (t.length > 1 && ctx.measureText(t + '…').width > max) t = t.slice(0, -1); return t + '…'; }
+  async function fontsReady() { try { await Promise.all(['800 112px Urbanist', '700 40px Urbanist', '600 34px Urbanist'].map(f => document.fonts.load(f))); } catch (e) { /* respaldo del sistema */ } }
+  function renderGenerator() {
+    const el = $('#generator'); if (!el) return;
+    if (!$('#gen-canvas')) {
+      gen.canvas = h('canvas', { id: 'gen-canvas', width: 1600, height: 900, 'aria-label': 'Vista previa de la diapositiva' });
+      const side = h('div', { class: 'gen-side' },
+        h('label', { class: 'field' }, h('span', { class: 'l', text: 'Título' }), h('input', { type: 'text', value: gen.title, id: 'gen-title', oninput: e => { gen.title = e.target.value; paintPreview(); } })),
+        h('label', { class: 'field' }, h('span', { class: 'l', text: 'Subtítulo' }), h('input', { type: 'text', value: gen.subtitle, id: 'gen-subtitle', placeholder: 'se arma solo con la pestaña activa', oninput: e => { gen.subtitle = e.target.value; paintPreview(); } })),
+        h('label', { class: 'field' }, h('span', { class: 'l', text: 'Fecha de corte' }), h('input', { type: 'date', value: gen.cutoff, id: 'gen-cutoff', onchange: e => { gen.cutoff = e.target.value; paintPreview(); } })),
+        h('label', { class: 'field' }, h('span', { class: 'l', text: 'Filas' }), h('select', { id: 'gen-filter', onchange: e => { gen.filter = e.target.value; paintPreview(); } }, h('option', { value: 'activas', text: 'Solo activas (sin Done)' }), h('option', { value: 'todas', text: 'Todas las visibles' }))),
+        h('div', { class: 'gen-actions' }, h('button', { class: 'ctrl primary', id: 'gen-download', onclick: downloadSlide }, 'Descargar PNG 3200×1800'), h('span', { class: 'note', id: 'gen-note' })));
+      el.replaceChildren(h('div', { class: 'section' }, h('header', null, h('div', null, h('h2', { text: 'Diapositiva de estado' }), h('p', { text: 'La vista previa y el archivo salen de la misma función: lo que se ve es lo que se descarga. Toma las filas de la pestaña activa, con la búsqueda aplicada.' }))),
+        h('div', { class: 'gen-grid' }, gen.canvas, side)));
+      fontsReady().then(paintPreview);
+    }
+    paintPreview();
+    const btn = $('#gen-download'), note = $('#gen-note');
+    if (btn) { if (!state.downloads) { btn.disabled = true; if (note) note.textContent = 'La descarga no está disponible en esta vista; la vista previa sí.'; } else { btn.disabled = false; if (note) note.textContent = ''; } }
+  }
+  function paintPreview() { const c = gen.canvas; if (!c) return; const ctx = c.getContext('2d'); ctx.clearRect(0, 0, c.width, c.height); drawSlide(ctx, 0.5, slideModel()); }
+  async function downloadSlide() {
+    if (!state.downloads) return; const note = $('#gen-note');
+    await fontsReady();
+    const c = document.createElement('canvas'); c.width = 3200; c.height = 1800; drawSlide(c.getContext('2d'), 1, slideModel());
+    const blob = await new Promise(res => c.toBlob(res, 'image/png'));
+    const name = `roadmap-${C.slug(state.activeTab === 'consolidada' ? 'consolidado' : tabName(state.activeTab))}-${gen.cutoff || hoyISO()}.png`;
+    try { await state.downloads.save({ filename: name, data: blob }); if (note) note.textContent = 'Guardado.'; }
+    catch (e) { if (note) note.textContent = e && e.code === 'declined' ? 'Descarga cancelada.' : e && e.code === 'unavailable' ? 'La descarga no está disponible en esta vista.' : `No se pudo descargar (${e && e.code ? e.code : 'error'}).`; }
+  }
+
+  window.addEventListener('resize', () => { const b = $('#toggle-gantt'); if (b) b.style.display = window.matchMedia('(max-width: 760px)').matches ? '' : 'none'; });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+
+</script>
+
+</body></html>
