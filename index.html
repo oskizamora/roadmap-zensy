@@ -558,6 +558,258 @@ dialog.sheet .dlg-foot { display: flex; gap: var(--s2); flex-wrap: wrap; justify
 
 </script>
 <script>
+/* Shim local compatible con claude.use(user/db/downloads/comments) cuando no hay runtime de Artifacts.
+   Persistencia en localStorage; si la tienda está vacía, siembra un dataset de ejemplo vía RoadmapCore.ingestar. */
+(function (root) {
+  'use strict';
+  const STORE_KEY = 'rz-local-db-v1';
+  const LOCAL_USER = { id: 'local-user', name: 'Editor local', canEdit: true };
+
+  function deepMerge(target, patch) {
+    const out = Object.assign({}, target);
+    for (const [k, v] of Object.entries(patch || {})) {
+      if (v && typeof v === 'object' && !Array.isArray(v) && target[k] && typeof target[k] === 'object' && !Array.isArray(target[k])) {
+        out[k] = deepMerge(target[k], v);
+      } else out[k] = v;
+    }
+    return out;
+  }
+
+  function loadStore() {
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.docs && typeof parsed.docs === 'object') return parsed;
+      }
+    } catch (e) { /* sin almacenamiento o JSON inválido */ }
+    return null;
+  }
+
+  function saveStore(store) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) { /* cuota / privado */ }
+  }
+
+  function seedDocs() {
+    const C = root.RoadmapCore;
+    const docs = {};
+    const y = new Date().getFullYear();
+    const samples = {
+      Producto: {
+        responsable: 'Producto', fechaCorte: `${y}-11-01`, orden: 1,
+        rows: [
+          ['Iniciativa', 'Fase', 'Inicio', 'Fin', 'Estado', 'Área/Equipo', 'Responsable', 'Go live (mes)', 'Salida a producción', 'Confianza en la fecha', 'Objetivo', 'Dependencias', 'Link/Épica'],
+          ['Onboarding self-serve', 'Discovery', `${y}-09-01`, `${y}-09-30`, 'En progreso', 'Producto', 'Ana', `noviembre ${y}`, `${y}-11-20`, 'Confirmada', 'Reducir tiempo a primer valor', '', ''],
+          ['Onboarding self-serve', 'Build', `${y}-10-01`, `${y}-11-15`, 'En progreso', 'Producto', 'Ana', `noviembre ${y}`, `${y}-11-20`, 'Confirmada', '', '', ''],
+          ['Portal de partners', 'PRD', `${y}-10-15`, `${y}-12-15`, 'PRD', 'Producto', 'Luis', `enero ${y + 1}`, '', 'En observación', 'Abrir canal B2B', 'Identidad', ''],
+          ['App móvil v1', 'Discovery', `${y}-11-01`, `${y}-12-31`, 'Discovery', 'Producto', 'María', `marzo ${y + 1}`, '', 'Sin confirmar', 'Explorar alcance móvil', '', ''],
+        ],
+      },
+      Operaciones: {
+        responsable: 'Operaciones', fechaCorte: `${y}-11-01`, orden: 2,
+        rows: [
+          ['Iniciativa', 'Fase', 'Inicio', 'Fin', 'Estado', 'Área/Equipo', 'Responsable', 'Go live (mes)', 'Salida a producción', 'Confianza en la fecha', 'Objetivo', 'Dependencias', 'Link/Épica'],
+          ['Automatizar conciliación', 'Build', `${y}-09-15`, `${y}-11-30`, 'QA', 'Operaciones', 'Carla', `diciembre ${y}`, `${y}-12-10`, 'Confirmada', 'Cerrar mes en un día', '', ''],
+          ['Playbook de soporte L1', 'Done', `${y}-07-01`, `${y}-08-31`, 'Done', 'Operaciones', 'Diego', `agosto ${y}`, `${y}-08-20`, 'Confirmada', 'Estandarizar respuestas', '', ''],
+        ],
+      },
+      Finanzas: {
+        responsable: 'Finanzas', fechaCorte: `${y}-10-15`, orden: 3,
+        rows: [
+          ['Iniciativa', 'Fase', 'Inicio', 'Fin', 'Estado', 'Área/Equipo', 'Responsable', 'Go live (mes)', 'Salida a producción', 'Confianza en la fecha', 'Objetivo', 'Dependencias', 'Link/Épica'],
+          ['Facturación recurrente', 'Build', `${y}-10-01`, `${y}-12-20`, 'Ready for dev', 'Finanzas', 'Sofía', `enero ${y + 1}`, '', 'En observación', 'Cobrar suscripciones sin fricción', 'Producto', ''],
+        ],
+      },
+      Growth: {
+        responsable: 'Growth', fechaCorte: `${y}-11-01`, orden: 4,
+        rows: [
+          ['Iniciativa', 'Fase', 'Inicio', 'Fin', 'Estado', 'Área/Equipo', 'Responsable', 'Go live (mes)', 'Salida a producción', 'Confianza en la fecha', 'Objetivo', 'Dependencias', 'Link/Épica'],
+          ['Programa de referidos', 'Discovery', `${y}-11-01`, `${y + 1}-01-15`, 'Discovery', 'Growth', 'Pablo', `febrero ${y + 1}`, '', 'Sin confirmar', 'Crecimiento orgánico', '', ''],
+        ],
+      },
+      People: {
+        responsable: 'People', fechaCorte: `${y}-10-01`, orden: 5,
+        rows: [
+          ['Iniciativa', 'Fase', 'Inicio', 'Fin', 'Estado', 'Área/Equipo', 'Responsable', 'Go live (mes)', 'Salida a producción', 'Confianza en la fecha', 'Objetivo', 'Dependencias', 'Link/Épica'],
+          ['Onboarding de talento', 'Build', `${y}-09-01`, `${y}-10-31`, 'Done', 'People', 'Elena', `octubre ${y}`, `${y}-10-15`, 'Confirmada', 'Primeras dos semanas claras', '', ''],
+        ],
+      },
+    };
+    for (const [name, cfg] of Object.entries(samples)) {
+      const result = C.ingestar(name, cfg.rows, {
+        fuente: 'Datos de ejemplo (modo local)',
+        responsable: cfg.responsable,
+        fechaCorte: cfg.fechaCorte,
+        orden: cfg.orden,
+        ingestedAt: new Date().toISOString(),
+      });
+      if (!result.ok) continue;
+      docs['tabs/' + result.tab.id] = result.tab;
+      for (const row of result.rows) docs[`source/${result.tab.id}/rows/${row.rowKey}`] = row;
+    }
+    docs['settings/global'] = { v: 1, statusColors: JSON.parse(JSON.stringify(C.COLORES_ESTADO)) };
+    return docs;
+  }
+
+  function createLocalClaude() {
+    let store = loadStore();
+    if (!store) { store = { v: 1, docs: seedDocs() }; saveStore(store); }
+    const colListeners = new Map(); // collectionPath -> Set(cb)
+    const docListeners = new Map();  // docPath -> Set(cb)
+
+    function persist() { saveStore(store); }
+
+    function collectionDocs(colPath) {
+      const prefix = colPath + '/';
+      const out = [];
+      for (const [path, data] of Object.entries(store.docs)) {
+        if (!path.startsWith(prefix)) continue;
+        const rest = path.slice(prefix.length);
+        if (!rest || rest.includes('/')) continue;
+        out.push({ id: rest, path, data: JSON.parse(JSON.stringify(data)) });
+      }
+      out.sort((a, b) => a.id.localeCompare(b.id));
+      return out;
+    }
+
+    function makeDocSnap(path) {
+      const data = store.docs[path];
+      return {
+        exists: data !== undefined,
+        id: path.split('/').pop(),
+        metadata: { fromCache: false },
+        data: () => data === undefined ? undefined : JSON.parse(JSON.stringify(data)),
+      };
+    }
+
+    function makeColSnap(colPath, changes) {
+      const docs = collectionDocs(colPath).map(d => ({
+        id: d.id,
+        metadata: { fromCache: false },
+        data: () => JSON.parse(JSON.stringify(d.data)),
+      }));
+      const changeList = changes || docs.map(d => ({ type: 'added', doc: d }));
+      return {
+        docs,
+        metadata: { fromCache: false },
+        docChanges: () => changeList.slice(),
+      };
+    }
+
+    function notifyDoc(path) {
+      const set = docListeners.get(path);
+      if (set) for (const cb of set) { try { cb(makeDocSnap(path)); } catch (e) { /* listener */ } }
+    }
+
+    function notifyCollection(colPath, changes) {
+      const set = colListeners.get(colPath);
+      if (set) {
+        const snap = makeColSnap(colPath, changes);
+        for (const cb of set) { try { cb(snap); } catch (e) { /* listener */ } }
+      }
+    }
+
+    function parentCollection(docPath) {
+      const i = docPath.lastIndexOf('/');
+      return i > 0 ? docPath.slice(0, i) : '';
+    }
+
+    function docRef(path) {
+      return {
+        onSnapshot(next, error) {
+          if (!docListeners.has(path)) docListeners.set(path, new Set());
+          docListeners.get(path).add(next);
+          try { next(makeDocSnap(path)); } catch (e) { if (error) error(e); }
+          return () => { const s = docListeners.get(path); if (s) s.delete(next); };
+        },
+        async set(data) {
+          const before = store.docs[path];
+          store.docs[path] = JSON.parse(JSON.stringify(data));
+          persist();
+          notifyDoc(path);
+          const col = parentCollection(path);
+          const id = path.slice(col.length + 1);
+          const snapDoc = { id, metadata: { fromCache: false }, data: () => JSON.parse(JSON.stringify(store.docs[path])) };
+          notifyCollection(col, [{ type: before === undefined ? 'added' : 'modified', doc: snapDoc }]);
+        },
+        async update(patch) {
+          if (store.docs[path] === undefined) {
+            const err = new Error('not-found'); err.code = 'not-found'; throw err;
+          }
+          store.docs[path] = deepMerge(store.docs[path], patch);
+          persist();
+          notifyDoc(path);
+          const col = parentCollection(path);
+          const id = path.slice(col.length + 1);
+          const snapDoc = { id, metadata: { fromCache: false }, data: () => JSON.parse(JSON.stringify(store.docs[path])) };
+          notifyCollection(col, [{ type: 'modified', doc: snapDoc }]);
+        },
+        async delete() {
+          if (store.docs[path] === undefined) return;
+          const col = parentCollection(path);
+          const id = path.slice(col.length + 1);
+          const snapDoc = { id, metadata: { fromCache: false }, data: () => undefined };
+          delete store.docs[path];
+          persist();
+          notifyDoc(path);
+          notifyCollection(col, [{ type: 'removed', doc: snapDoc }]);
+        },
+      };
+    }
+
+    function collectionRef(colPath) {
+      return {
+        onSnapshot(next, error) {
+          if (!colListeners.has(colPath)) colListeners.set(colPath, new Set());
+          colListeners.get(colPath).add(next);
+          try { next(makeColSnap(colPath)); } catch (e) { if (error) error(e); }
+          return () => { const s = colListeners.get(colPath); if (s) s.delete(next); };
+        },
+        doc(id) { return docRef(colPath + '/' + id); },
+      };
+    }
+
+    const db = {
+      collection: collectionRef,
+      doc: docRef,
+    };
+
+    const user = {
+      async me() { return Object.assign({}, LOCAL_USER); },
+      async can(perm) { return perm === 'data.write'; },
+      async profiles(ids) {
+        const out = {};
+        for (const id of ids || []) out[id] = { name: id === LOCAL_USER.id ? LOCAL_USER.name : String(id) };
+        return out;
+      },
+    };
+
+    const downloads = {
+      async save({ filename, data }) {
+        const blob = data instanceof Blob ? data : new Blob([data]);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename || 'download.bin';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      },
+    };
+
+    return {
+      use(name) {
+        if (name === 'user') return Promise.resolve(user);
+        if (name === 'db') return Promise.resolve(db);
+        if (name === 'downloads') return Promise.resolve(downloads);
+        if (name === 'comments') return Promise.resolve(null);
+        return Promise.resolve(null);
+      },
+    };
+  }
+
+  root.createRoadmapLocalClaude = createLocalClaude;
+})(typeof self !== 'undefined' ? self : this);
+</script>
+<script>
 /* Roadmap Zensy v2 — lógica de la página. Depende de RoadmapCore (core.js) y del runtime de artefactos (claude.use). */
 (function () {
   'use strict';
@@ -575,7 +827,7 @@ dialog.sheet .dlg-foot { display: flex; gap: var(--s2); flex-wrap: wrap; justify
     overlay: {},         // id -> Map(rowKey -> doc)
     settings: JSON.parse(JSON.stringify(DEFAULT_SETTINGS)),
     subs: {}, loaded: { tabs: false, settings: false },
-    activeTab: 'consolidada', query: '', scenario: null, dbMissing: false, loadTimer: null, stale: false,
+    activeTab: 'consolidada', query: '', scenario: null, dbMissing: false, localMode: false, loadTimer: null, stale: false,
     saving: 0, saveState: 'idle', saveError: '', writeQueues: {}, debounces: {},
     commentsOff: false,
   };
@@ -623,7 +875,15 @@ dialog.sheet .dlg-foot { display: flex; gap: var(--s2); flex-wrap: wrap; justify
   }
 
   async function connect() {
-    if (!window.claude || typeof window.claude.use !== 'function') { state.dbMissing = true; renderAll(); return; }
+    // Preferir el runtime real de Claude Artifacts; si falta, instalar el shim local (localStorage).
+    if (!window.claude || typeof window.claude.use !== 'function') {
+      if (typeof window.createRoadmapLocalClaude === 'function') {
+        window.claude = window.createRoadmapLocalClaude();
+        state.localMode = true;
+      } else {
+        state.dbMissing = true; renderAll(); return;
+      }
+    }
     const [user, db, downloads, comments] = await Promise.all([claude.use('user'), claude.use('db'), claude.use('downloads'), claude.use('comments')]);
     state.user = user; state.db = db; state.downloads = downloads; state.comments = comments;
     if (user) {
@@ -775,6 +1035,7 @@ dialog.sheet .dlg-foot { display: flex; gap: var(--s2); flex-wrap: wrap; justify
   function renderNotices() {
     const el = $('#notices'); if (!el) return; const kids = [];
     if (state.dbMissing) kids.push(h('div', { class: 'alert info' }, 'Para ver el roadmap inicia sesión con tu cuenta de la organización y abre el enlace desde claude.ai.'));
+    else if (state.localMode) kids.push(h('div', { class: 'alert info' }, 'Modo local: los datos se guardan en este navegador (sin cuenta de Claude).'));
     else if (state.db && state.loaded.tabs && state.me.id === null) kids.push(h('div', { class: 'alert info' }, 'Esta vista no tiene identidad: inicia sesión con tu cuenta de la organización para ver los datos.'));
     if (state.stale) kids.push(h('div', { class: 'alert' }, 'Los datos todavía no se pueden leer. Lo que se muestra puede estar desactualizado.'));
     if (state.saveError) kids.push(h('div', { class: 'alert error' }, state.saveError));
